@@ -1,18 +1,14 @@
 FORMAT: 1A
-HOST: https://dataiq.leadiq.com/api/graphql
+HOST: https://dataiq.leadiq.com
 
 # LeadIQ Contact Search
 
 This GraphQL API is designed to find a contact by name and company or linkedin url. A state of the art technology is used to support tracking original data sources for email, phone and job changes. Contact Search is available starting October 2019 and new end points like account search will be provided in Q4 2018.
 
-::: note
-
 |    HTTP Header    |              Header Value             |
 |-------------------|---------------------------------------|
 | **Content-Type**  | _application/json_                    |
 | **Authorization** | _Bearer <your_access_token>_ |
-
-:::
 
 
 # Authentication
@@ -26,7 +22,7 @@ The **access token** can be requested at api-support at leadiq.com.
 | **Content-Type**  | _application/json_                    |
 | **Authorization** | _Bearer <your_access_token>_ |
 
-## Contact Search by name and company
+## Contact Search by name and company [/api/graphql(?name_company)]
 
 Find a contact by name and company.
 
@@ -91,7 +87,7 @@ Query Variables
 }
 ```
 
-### Search People [POST]
+### Search contact by name and company [POST]
 
 Gives back the contact for a specific user by name and company.
 
@@ -187,7 +183,7 @@ Gives back the contact for a specific user by name and company.
                 ]
             }
 
-## Contact Search by linkedin url
+## Contact Search by linkedin url [/api/graphql(?linkedinUrl)]
 
 Find a contact by linkedin url. 
 
@@ -202,15 +198,15 @@ Query Variables
 
 {
     "input": {
-        "firstName": "Niels",
-        "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324"
+        "firstName": "Angelo",
+        "linkedinUrl": "https://www.linkedin.com/in/angelokh"
     }
 }
 ```
 
-### Search People [POST]
+### Search contact by linkedin url [POST]
 
-Gives back the contact for a specific user by name and company.
+Gives back the contact for a specific user by linkedin url.
 
 + Request (application/json)
 
@@ -224,9 +220,8 @@ Gives back the contact for a specific user by name and company.
 
             {
                 "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value meta { sources { source } } } phones { value meta { sources { source } } } } } } }",
-                "variables": { "input": { "firstName": "Angelo", "linkedinUrl": "https://www.linkedin.com/in/angelokh" }}}
+                "variables": {"input": { "firstName":"Angelo", "linkedinUrl": "https://www.linkedin.com/in/angelokh" }}
             }
-            
 
 + Response 200 (application/json)
 
@@ -287,7 +282,7 @@ Gives back the contact for a specific user by name and company.
                         "total": 1
                     }
                 }
-            }     
+            }
 
 + Response 400 (application/json)
     
