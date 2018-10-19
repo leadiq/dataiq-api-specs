@@ -3,17 +3,21 @@ HOST: https://dataiq.leadiq.com
 
 # LeadIQ Contact Search
 
-This GraphQL API is designed to find a contact by name and company or linkedin url. A state of the art technology is used to support tracking original data sources for email, phone and job changes. Contact Search is available starting October 2019 and new end points like account search will be provided in Q4 2018.
+This GraphQL API is designed to find a contact by name and company or linkedin url. A state-of-the-art technology is used to support tracking original data sources for email, phone and job changes. Contact Search is available starting October 2018 and new end points like account search (searched all contacts in one account) and data feedback will be provided in Q4 2018.
 
-|    HTTP Header    |              Header Value             |
-|-------------------|---------------------------------------|
-| **Content-Type**  | _application/json_                    |
-| **Authorization** | _Bearer <your_access_token>_ |
+| Features Supported |         Release Date          |
+|--------------------|-------------------------------|
+| **Contact Search** | October 2018                  |
+| **Account Search** | Q4 2018                       |
+| **Account Search** | Q4 2018                       |
+
+**Note**
+This documentation is to describe how to use the API and explain some of the design decisions. Tools like Insomnia or GraphQL Playground are privided as a more interactive way to explore the API schema. For details, please see [Using GraphQL](#references/using-graphql).
 
 
 # Authentication
 
-Auth token must be sent in the request header.
+Authentication token must be sent in the request header.
 
 The **access token** can be requested at api-support at leadiq.com.
 
@@ -22,7 +26,7 @@ The **access token** can be requested at api-support at leadiq.com.
 | **Content-Type**  | _application/json_                    |
 | **Authorization** | _Bearer <your_access_token>_ |
 
-## Contact Search by name and company [/api/graphql{?name_company}]
+## Contact Search [/api/graphql{?name_company}]
 
 Find a contact by name and company.
 
@@ -87,9 +91,10 @@ Query Variables
 }
 ```
 
-### Search contact by name and company [POST]
+### By name and company [POST]
 
-Gives back the contact for a specific user by name and company.
+Gives back a list of users based on the search input - name and company.
+
 
 + Request (application/json)
 
@@ -103,7 +108,7 @@ Gives back the contact for a specific user by name and company.
 
             {
                 "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value meta { sources { source } } } phones { value meta { sources { source } } } } } } }",
-                "variables": {"input": { "firstName":"Niels", "lastName": "Bentzen", "company":{ "name": "Danish Refugee Council " }}}
+                "variables": {"input": { "firstName":"Niels", "lastName": "Bentzen", "company":{ "name": "Danish Refugee Council" }}}
             }
             
 
@@ -183,7 +188,215 @@ Gives back the contact for a specific user by name and company.
                 ]
             }
 
-## Contact Search by linkedin url [/api/graphql{?linkedinUrl}]
+## Contact Search [/api/graphql{?name_domain}]
+
+Find a contact by name and domain.
+
+**Request Body**
+
+```
+query SearchPeople($input: SearchPeopleInput!) {
+    searchPeople(input: $input) {
+        totalResults
+        hasMore
+        results {
+            id
+            name {
+                first
+                middle
+                last
+            }
+            personalEmails {
+                value
+            }
+            linkedin {
+                linkedinUrl
+                linkedinId
+            }
+            currentPositions {
+                title
+                company {
+                    name
+                    industry
+                }
+                emails {
+                    value
+                    meta {
+                        sources {
+                            source
+                        }
+                    }
+                }
+                phones {
+                    value
+                    meta {
+                        sources {
+                            source
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+Query Variables
+
+{
+    "input": {
+        "firstName": "Melissa",
+        "lastName": "Schwenker",
+        "company": {
+            "Domain": "salesforce.com"
+        }
+    }
+}
+```
+
+### By name and domain [POST]
+
+Gives back a list of users based on the search input - name and domain.
+
++ Request (application/json)
+
+    + Header 
+            
+            Authorization: Bearer your_access_token
+
+    + Attributes (SearchPeopleInput)
+
+    + Body
+
+            {
+                "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value meta { sources { source } } } phones { value meta { sources { source } } } } } } }",
+                "variables": {"input": { "firstName":"Melissa", "lastName": "Schwenker", "company":{ "Domain": "salesforce.com" }}}
+            }
+            
+
++ Response 200 (application/json)
+
+    + Attributes (SearchResult)
+
+    + Body
+
+            {
+                "data": {
+                    "searchPeople": {
+                        "hasMore": false,
+                        "results": [
+                            {
+                                "currentPositions": [
+                                    {
+                                        "company": {
+                                            "industry": "Internet",
+                                            "name": "Salesforce"
+                                        },
+                                        "emails": [
+                                            {
+                                                "meta": {
+                                                    "sources": [
+                                                        {
+                                                            "source": "leadiq-own-unknown"
+                                                        },
+                                                        {
+                                                            "source": "leadiq-vendor-em"
+                                                        },
+                                                        {
+                                                            "source": "leadiq-vendor-sg"
+                                                        },
+                                                        {
+                                                            "source": "leadiq-own-lc"
+                                                        }
+                                                    ]
+                                                },
+                                                "value": "mschwenker@salesforce.com"
+                                            }
+                                        ],
+                                        "phones": [
+                                            {
+                                                "meta": {
+                                                    "sources": [
+                                                        {
+                                                            "source": "leadiq-vendor-em"
+                                                        }
+                                                    ]
+                                                },
+                                                "value": "+1-312-288-3600"
+                                            },
+                                            {
+                                                "meta": {
+                                                    "sources": [
+                                                        {
+                                                            "source": "leadiq-vendor-em"
+                                                        }
+                                                    ]
+                                                },
+                                                "value": "+1-312-873-0640"
+                                            },
+                                            {
+                                                "meta": {
+                                                    "sources": [
+                                                        {
+                                                            "source": "leadiq-vendor-sg"
+                                                        }
+                                                    ]
+                                                },
+                                                "value": "+1-415-901-7000"
+                                            }
+                                        ],
+                                        "title": "Commercial Account Executive - Financial Services "
+                                    }
+                                ],
+                                "id": "0187781a-40f4-42b0-807a-0df874e9b841",
+                                "linkedin": {
+                                    "linkedinId": "17840808",
+                                    "linkedinUrl": "https://www.linkedin.com/in/melissa-schwenker-660b845"
+                                },
+                                "name": {
+                                    "first": "Melissa",
+                                    "last": "Schwenker",
+                                    "middle": null
+                                },
+                                "personalEmails": []
+                            }
+                        ],
+                        "totalResults": 1
+                    }
+                },
+                "extensions": {
+                    "cost": {
+                        "emailCost": 1,
+                        "phoneCost": 3,
+                        "total": 4
+                    }
+                }
+            }       
+
++ Response 400 (application/json)
+    
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
++ Response 401 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
+## Contact Search [/api/graphql{?linkedinUrl}]
 
 Find a contact by linkedin url. 
 
@@ -204,9 +417,9 @@ Query Variables
 }
 ```
 
-### Search contact by linkedin url [POST]
+### By linkedin url [POST]
 
-Gives back the contact for a specific user by linkedin url.
+Gives back a list of users based on the search input - linkedin url.
 
 + Request (application/json)
 
@@ -485,22 +698,22 @@ Gives back the contact for a specific user by linkedin url.
 GraphQL is a web technology used to decouple the request/response structure from particular endpoints.
 It works by acting as a layer over existing request/response systems (most frequently HTTP) that allows the client to specify the type and structure of data that they wish to receive. 
 
-The server manages efficiently recieving queries and aggregating the requisite data for the client.
+The server manages efficiently receiving queries and aggregating the requisite data for the client.
 
 ## Getting Started
 
-Working with GraphQL is fairly simply however it can be some what unusual for people are coming from REST backgrounds. It should seem more familiar to those who have dealt with Databases in the past as it is simply a query language for client requests.
+Working with GraphQL is fairly simply however it can be somewhat unusual for people are coming from REST backgrounds. It should seem more familiar to those who have dealt with Databases in the past as it is simply a query language for client requests.
 
 To use GraphQL you need to know what types are available to the client for requests. For REST endpoints this is quite static, as the endpoints are developed by the API server and then exposed for consumption. Meaning that changing the data requires the server bumps up new API version. For GraphQL, this is only the case if there are *brand-new* types being introduced, otherwise you can compose the existing types in any manner you please.
 
 To see the support types in the LeadIQ GraphQL API you could try reading the schema using tools like Insomnia or GraphQL Playground.
 
 ## Resources
-GraphQL as a technology is far to large to elaborate completely here. For more technical references on how to use GraphQL itself please review the following resources.
+GraphQL as a technology is far too large to elaborate completely here. For more technical references on how to use GraphQL itself please review the following resources.
 
 - [GraphQL Docs](http://graphql.org/learn/)
 
-Here are the list of tools that you can download to explore GraphQL schema.
+Here is the list of tools that you can download to explore GraphQL schema.
 
 - [Insomnia](https://insomnia.rest/graphql/)
 - [GraphQL Playground](https://github.com/prisma/graphql-playground)
