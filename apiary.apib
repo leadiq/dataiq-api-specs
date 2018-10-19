@@ -5,7 +5,7 @@ HOST: https://dataiq.leadiq.com
 
 Gives back the contact for a specific user by name and company.
 
-# Authentication (OAuth / JWT)
+# Authentication
 
 Auth Token must be sent in the request header.
 
@@ -81,7 +81,8 @@ Gives back the contact for a specific user by name and company.
     + Body
 
             {
-                "query": "{ searchPeople(input: {firstName: \"Niels\", lastName: \"Bentzen\", company: {name: \"Danish Refugee Council\"}}) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value meta { sources { source } } } phones { value meta { sources { source } } } } } } }"
+                "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value meta { sources { source } } } phones { value meta { sources { source } } } } } } }",
+                "input": "{ \"firstName\": \"Niels\", \"lastName\": \"Bentzen\", \"company\": { \"name\": \"Danish Refugee Council\" }}"
             }
             
 
