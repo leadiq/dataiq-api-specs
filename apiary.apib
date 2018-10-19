@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: https://dataiq.leadiq.com
+HOST: https://dataiq.leadiq.com/api/graphql
 
 # LeadIQ Contact Search
 
@@ -26,7 +26,7 @@ The **access token** can be requested at api-support at leadiq.com.
 | **Content-Type**  | _application/json_                    |
 | **Authorization** | _Bearer <your_access_token>_ |
 
-## Contact Search by name and company [/api/graphql]
+## Contact Search by name and company
 
 Find a contact by name and company.
 
@@ -91,26 +91,6 @@ Query Variables
 }
 ```
 
-Find a contact by linkedin url. 
-
-::: note
-1. Current version still requires you to pass in first name. This will be fixed in the next release.
-2. Linkedin url can't have the ending slash. This will be fixed in the next release.
-:::
-
-**Request Body**
-
-```
-Query Variables
-
-{
-    "input": {
-        "firstName": "Niels",
-        "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324"
-    }
-}
-```
-
 ### Search People [POST]
 
 Gives back the contact for a specific user by name and company.
@@ -127,7 +107,7 @@ Gives back the contact for a specific user by name and company.
 
             {
                 "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value meta { sources { source } } } phones { value meta { sources { source } } } } } } }",
-                "variables": {"input":{"firstName":"Niels","lastName": "Bentzen","company":{"name":"Danish Refugee Council"}}}
+                "variables": {"input": { "firstName":"Niels", "lastName": "Bentzen", "company":{ "name": "Danish Refugee Council " }}}
             }
             
 
@@ -182,6 +162,132 @@ Gives back the contact for a specific user by name and company.
                     }
                 }
             }            
+
++ Response 400 (application/json)
+    
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
++ Response 401 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
+## Contact Search by linkedin url
+
+Find a contact by linkedin url. 
+
+**Refs**:
+1. Current version still requires you to pass in first name. This will be fixed in the next release.
+2. Linkedin url can't have the ending slash. This will be fixed in the next release.
+
+**Request Body**
+
+```
+Query Variables
+
+{
+    "input": {
+        "firstName": "Niels",
+        "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324"
+    }
+}
+```
+
+### Search People [POST]
+
+Gives back the contact for a specific user by name and company.
+
++ Request (application/json)
+
+    + Header 
+            
+            Authorization: Bearer your_access_token
+
+    + Attributes (SearchPeopleInput)
+
+    + Body
+
+            {
+                "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value meta { sources { source } } } phones { value meta { sources { source } } } } } } }",
+                "variables": { "input": { "firstName": "Angelo", "linkedinUrl": "https://www.linkedin.com/in/angelokh" }}}
+            }
+            
+
++ Response 200 (application/json)
+
+    + Attributes (SearchResult)
+
+    + Body
+
+            {
+                "data": {
+                    "searchPeople": {
+                        "hasMore": false,
+                        "results": [
+                            {
+                                "currentPositions": [
+                                    {
+                                        "company": {
+                                            "domain": "leadiq.com",
+                                            "emailDomains": null,
+                                            "industry": "Computer Software",
+                                            "name": "LeadIQ"
+                                        },
+                                        "emails": [
+                                            {
+                                                "meta": {
+                                                    "sources": [
+                                                        {
+                                                            "source": "leadiq-own-ev"
+                                                        }
+                                                    ]
+                                                },
+                                                "value": "angelo@leadiq.com"
+                                            }
+                                        ],
+                                        "phones": [],
+                                        "title": "Co-founder & CTO"
+                                    }
+                                ],
+                                "id": "d063bcea-5258-41a3-ac19-fec286940181",
+                                "linkedin": {
+                                    "linkedinId": "4327441",
+                                    "linkedinUrl": "https://www.linkedin.com/in/angelokh"
+                                },
+                                "name": {
+                                    "first": "Angelo",
+                                    "last": "Huang",
+                                    "middle": null
+                                },
+                                "personalEmails": []
+                            }
+                        ],
+                        "totalResults": 1
+                    }
+                },
+                "extensions": {
+                    "cost": {
+                        "emailCost": 1,
+                        "phoneCost": 0,
+                        "total": 1
+                    }
+                }
+            }     
 
 + Response 400 (application/json)
     
