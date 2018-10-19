@@ -2,13 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>apiary</title>
+  <title>LeadIQ GraphQL - Contact Search</title>
 </head>
 <body>
   <script src="https://api.apiary.io/seeds/embed.js"></script>
   <script>
     var embed = new Apiary.Embed({
-        subdomain: 'dataiq'
+        subdomain: 'dataiq',
+        customFonts: {
+          googleFonts: 'https://fonts.googleapis.com/css?family=Ubuntu'
+        },
+        theme: {
+          fontFamily: 'Ubuntu',
+          machineColumn: { // To change color of a title in Machine Column
+            content: {
+              blankSlate: {
+                title: {
+                  color: '#6B9617'
+                }
+              }
+            }
+          }
+        }
     });
   </script>
 </body>
