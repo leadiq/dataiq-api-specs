@@ -3,22 +3,32 @@ HOST: https://dataiq.leadiq.com
 
 # LeadIQ Contact Search
 
-Gives back the contact for a specific user by name and company.
+This GraphQL API is designed to find a contact by name and company or linkedin url. A state of the art technology is used to support tracking original data sources for email, phone and job changes. Contact Search is available starting October 2019 and new end points like account search will be provided in Q4 2018.
 
-# Authentication
-
-Auth Token must be sent in the request header.
-
-The **access token** can be requested at the [LeadIQ API Support](api-support@leadiq.com)
+::: note
 
 |    HTTP Header    |              Header Value             |
 |-------------------|---------------------------------------|
 | **Content-Type**  | _application/json_                    |
 | **Authorization** | _Bearer <your_access_token>_ |
 
-## Contact Search [/api/graphql]
+:::
 
-Gives back the contact for a specific user by name and company.
+
+# Authentication
+
+Auth token must be sent in the request header.
+
+The **access token** can be requested at api-support at leadiq.com.
+
+|    HTTP Header    |              Header Value             |
+|-------------------|---------------------------------------|
+| **Content-Type**  | _application/json_                    |
+| **Authorization** | _Bearer <your_access_token>_ |
+
+## Contact Search by name and company [/api/graphql]
+
+Find a contact by name and company.
 
 **Request Body**
 
@@ -81,6 +91,26 @@ Query Variables
 }
 ```
 
+Find a contact by linkedin url. 
+
+::: note
+1. Current version still requires you to pass in first name. This will be fixed in the next release.
+2. Linkedin url can't have the ending slash. This will be fixed in the next release.
+:::
+
+**Request Body**
+
+```
+Query Variables
+
+{
+    "input": {
+        "firstName": "Niels",
+        "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324"
+    }
+}
+```
+
 ### Search People [POST]
 
 Gives back the contact for a specific user by name and company.
@@ -89,7 +119,9 @@ Gives back the contact for a specific user by name and company.
 
     + Header 
             
-            Authorization: Bearer <your_access_token>
+            Authorization: Bearer your_access_token
+
+    + Attributes (SearchPeopleInput)
 
     + Body
 
@@ -174,7 +206,6 @@ Gives back the contact for a specific user by name and company.
                     }
                 ]
             }
-
 
 # Data Structures
 
