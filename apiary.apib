@@ -1,0 +1,348 @@
+FORMAT: 1A
+HOST: https://dataiq.leadiq.com
+
+# LeadIQ Contact Search
+
+Gives back the contact for a specific user by name and company.
+
+# Authentication (OAuth / JWT)
+
+Auth Token must be sent in the request header.
+
+The **access token** can be requested at the [LeadIQ API Support](api-support@leadiq.com)
+
+|    HTTP Header    |              Header Value             |
+|-------------------|---------------------------------------|
+| **Content-Type**  | _application/json_                    |
+| **Authorization** | _Bearer <your_access_token>_ |
+
+## Contact Search [/api/graphql]
+
+Gives back the contact for a specific user by name and company.
+
+**Request Body**
+```
+{
+    searchPeople( input: { firstName: "Niels", lastName: "Bentzen", company: { name: "Danish Refugee Council" } } ) {
+        totalResults
+        hasMore
+        results {
+            id
+            name {
+                first
+                middle
+                last
+            }
+            personalEmails {
+                value
+            }
+            linkedin {
+                linkedinUrl
+                linkedinId
+            }
+            currentPositions {
+                title
+                company {
+                    name
+                    industry
+                }
+                emails {
+                    value
+                    meta {
+                        sources {
+                            source
+                        }
+                    }
+                }
+                phones {
+                    value
+                    meta {
+                        sources {
+                            source
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+### Search People [POST]
+
+Gives back the contact for a specific user by name and company.
+
++ Request (application/json)
+
+    + Header 
+            
+            Authorization: Bearer <your_access_token>
+
+    + Body
+
+            {
+                "query": "{ searchPeople(input: {firstName: \"Niels\", lastName: \"Bentzen\", company: {name: \"Danish Refugee Council\"}}) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value meta { sources { source } } } phones { value meta { sources { source } } } } } } }"
+            }
+            
+
++ Response 200 (application/json)
+
+    + Attributes (SearchResult)
+
+    + Body
+
+            {
+                "data": {
+                    "searchPeople": {
+                        "hasMore": false,
+                        "results": [
+                            {
+                                "currentPositions": [
+                                    {
+                                        "company": {
+                                            "industry": "Nonprofit Organization Management",
+                                            "name": "Danish Refugee Council / Dansk Flygtningehjælp"
+                                        },
+                                        "emails": [
+                                            {
+                                                "meta": {
+                                                    "sources": [
+                                                        {
+                                                            "source": "leadiq-own-lc"
+                                                        }
+                                                    ]
+                                                },
+                                                "value": "niels.bentzen@drc.dk"
+                                            }
+                                        ],
+                                        "phones": [],
+                                        "title": "Program Advisor"
+                                    }
+                                ],
+                                "id": "a936b80a-14b2-4323-981b-cbc9d8c86972",
+                                "linkedin": {
+                                    "linkedinId": "84546029",
+                                    "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324"
+                                },
+                                "name": {
+                                    "first": "Niels",
+                                    "last": "Bentzen",
+                                    "middle": null
+                                },
+                                "personalEmails": []
+                            }
+                        ],
+                        "totalResults": 1
+                    }
+                }
+            }            
+
++ Response 401 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "Unsupported Content-Type from origin: text/plain; charset=UTF-8"
+                    }
+                ]
+            }
+
+
+# Data Structures
+
+## SearchPeopleInput
++ skip (number)
++ limit (number)
++ firstName (required, string)
++ lastName (string)
++ middleName (string)
++ fullName (string)
++ company (CompanyDetails)
++ linkedinId (string)
++ linkedinUrl (string)
++ email (string)
++ containsWorkContactInfo (boolean)
+
+## CompanyDetails
++ name (string)
++ Domain (string)
++ linkedinId (string)
++ country (string)
+
+## PersonRecord
++ id (required, string)
++ name (required, NameInfo)
++ version (required, number)
++ currentPositions (required, array[PositionRecord])
++ pastPositions (required, array[PositionRecord])
++ personalEmails (required, array[EmailRecord])
++ phones (required, array[PhoneRecord])
++ linkedin (LinkedinRecord)
+
+## NameInfo
++ first (required, string)
++ fullName (required, string)
++ last (string)
++ middle (string)
+
+## PositionRecord
++ companyId (required, string)
++ company (FlatCompanyForResponse)
++ title (string)
++ dateRange (DateRange)
++ emails (required, array[EmailRecord])
++ phones (required, array[PhoneRecord])
++ meta (MetaRecord_PositionType_GenericStatusType)
+
+## FlatCompanyForResponse
++ name (required, string)
++ alternativeNames (array[string])
++ domain (string)
++ emailDomains (array[string])
++ type (string)
++ phones (array[string])
++ country (string)
++ address (string)
++ locationInfo (LocationInfo)
++ logoUrl (string)
++ numberOfEmployees (number)
+
+## LocationInfo
++ formattedAddress (string)
++ street1 (string)
++ street2 (string)
++ city (string)
++ areaLevel1 (string)
++ country (string)
++ postalCode (string)
+
+## DateRange
++ start (number) - Timestamp
++ end (number) - Timestamp
+
+## `MetaRecord_PositionType_GenericStatusType`
++ sources (required, SourceType_PositionType_GenericStatusType)
++ lastUpdated (required, number) - Timestamp
+
+## `SourceType_PositionType_GenericStatusType`
++ source (required, string)
++ type (required, PositionType)
++ status (required, GenericStatusType)
++ otherDetails (required, SourceDetails)
+
+## PositionType (enum[string])
++ Current
++ Past
+
+## GenericStatusType (enum[string])
++ Valid
++ Invalid
+
+## SourceDetails
++ providerIds (required, array[string])
+
+## EmailRecord
++ value (required, string)
++ type (required, EmailType)
++ status (required, EmailVerificationStatus)
++ meta (required, MetaRecord_EmailType_EmailVerificationStatusType)
+
+## EmailType (enum[string])
++ WorkEmail
++ PersonalEmail
+
+## EmailVerificationStatus
++ type (required, EmailVerificationStatusType)
++ lastSeen (required, number) - Timestamp
+
+## EmailVerificationStatusType (enum[string])
++ Verified
++ Unverified
++ VerifiedLikely
++ Invalid
+
+## `MetaRecord_EmailType_EmailVerificationStatusType`
++ sources (required, array[SourceType_EmailType_EmailVerificationStatusType])
++ lastUpdated (required, number) - Timestamp
+
+## `SourceType_EmailType_EmailVerificationStatusType`
++ source (required, string)
++ type (required, EmailType)
++ status (required, EmailVerificationStatusType)
++ otherDetails (required, SourceDetails)
+
+## PhoneRecord
++ value (required, string)
++ type (required, PhoneType)
++ meta (required, MetaRecord_PhoneType_GenericStatusType)
+
+## PhoneType (enum[string])
++ WorkPhone
++ PersonalLandline
++ PersonalMobile
++ WorkMobile
++ WorkHQ
++ PersonalPhone
++ WorkBranch
+
+## `MetaRecord_PhoneType_GenericStatusType`
++ sources (required, array[SourceType_PhoneType_GenericStatusType])
++ lastUpdated (required, number) - Timestamp
+
+## `SourceType_PhoneType_GenericStatusType`
++ source (required, string)
++ type (required, PhoneType)
++ status (required, GenericStatusType)
++ otherDetails (required, SourceDetails)
+
+## LinkedinRecord
++ linkedinId (string)
++ linkedinUrl (string)
++ type (required, LinkedinType)
++ meta (required, MetaRecord_LinkedinType_GenericStatusType)
+
+## LinkedinType (enum[string])
++ NotApplicable
+
+## `MetaRecord_LinkedinType_GenericStatusType`
++ sources (required, array[SourceType_LinkedinType_GenericStatusType])
++ lastUpdated (required, number) - Timestamp
+
+## `SourceType_LinkedinType_GenericStatusType`
++ source (required, string)
++ type (required, LinkedinType)
++ status (required, GenericStatusType)
++ otherDetails (required, SourceDetails)
+
+## SearchResult
++ totalResults (required, number)
++ hasMore (required, boolean)
++ results (required, PersonRecord)
+
+
+# Group Using GraphQL
+
+GraphQL is a web technology used to decouple the request/response structure from particular endpoints.
+It works by acting as a layer over existing request/response systems (most frequently HTTP) that allows the client to specify the type and structure of data that they wish to receive. 
+
+The server manages efficiently recieving queries and aggregating the requisite data for the client.
+
+## Getting Started
+
+Working with GraphQL is fairly simply however it can be some what unusual for people are coming from REST backgrounds. It should seem more familiar to those who have dealt with Databases in the past as it is simply a query language for client requests.
+
+To use GraphQL you need to know what types are available to the client for requests. For REST endpoints this is quite static, as the endpoints are developed by the API server and then exposed for consumption. Meaning that changing the data requires the server bumps up new API version. For GraphQL, this is only the case if there are *brand-new* types being introduced, otherwise you can compose the existing types in any manner you please.
+
+To see the support types in the LeadIQ GraphQL API you could try reading the schema using tools like Insomnia or GraphQL Playground.
+
+## Resources
+GraphQL as a technology is far to large to elaborate completely here. For more technical references on how to use GraphQL itself please review the following resources.
+
+- [GraphQL Docs](http://graphql.org/learn/)
+
+Here are the list of tools that you can download to explore GraphQL schema.
+
+- [Insomnia](https://insomnia.rest/graphql/)
+- [GraphQL Playground](https://github.com/prisma/graphql-playground)
