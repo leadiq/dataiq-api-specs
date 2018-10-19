@@ -82,7 +82,7 @@ Gives back the contact for a specific user by name and company.
 
             {
                 "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value meta { sources { source } } } phones { value meta { sources { source } } } } } } }",
-                "input": "{ \"firstName\": \"Niels\", \"lastName\": \"Bentzen\", \"company\": { \"name\": \"Danish Refugee Council\" }}"
+                "variables": "{ \"firstName\": \"Niels\", \"lastName\": \"Bentzen\", \"company\": { \"name\": \"Danish Refugee Council\" }}"
             }
             
 
@@ -137,6 +137,18 @@ Gives back the contact for a specific user by name and company.
                     }
                 }
             }            
+
++ Response 400 (application/json)
+    
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "message"
+                    }
+                ]
+            }
 
 + Response 401 (application/json)
 
