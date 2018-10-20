@@ -12,7 +12,7 @@ This GraphQL API is designed to find a contact by name and company or linkedin u
 | **Data Feeback**   | Q4 2018                       |
 
 **Note**
-This documentation is to describe how to use the API and explain some of the design decisions. Tools like Insomnia or GraphQL Playground are privided as a more interactive way to explore the API schema. For details, please see [Using GraphQL](#reference/using-graphql).
+This documentation is to describe how to use the API and explain some of the design decisions. Tools like Insomnia or GraphQL Playground are privided as a more interactive way to explore the API schema. For details, please see [Using GraphQL](#reference/Using GraphQL).
 
 
 # Authentication
@@ -26,7 +26,7 @@ The **access token** can be requested at api-support at leadiq.com.
 | **Content-Type**  | _application/json_                    |
 | **Authorization** | _Bearer <your_access_token>_ |
 
-## Contact Search (1) [/api/graphql{?name_company}]
+## Search by Name and Company [/api/graphql{?name_company}]
 
 Find a contact by name and company.
 
@@ -91,7 +91,7 @@ Query Variables
 }
 ```
 
-### By name and company [POST]
+### Request [POST]
 
 Gives back a list of users based on the search input - name and company.
 
@@ -188,7 +188,7 @@ Gives back a list of users based on the search input - name and company.
                 ]
             }
 
-## Contact Search (2) [/api/graphql{?name_domain}]
+## Search by Name and Domain [/api/graphql{?name_domain}]
 
 Find a contact by name and domain.
 
@@ -253,7 +253,7 @@ Query Variables
 }
 ```
 
-### By name and domain [POST]
+### Request [POST]
 
 Gives back a list of users based on the search input - name and domain.
 
@@ -396,7 +396,7 @@ Gives back a list of users based on the search input - name and domain.
                 ]
             }
 
-## Contact Search (3) [/api/graphql{?linkedinUrl}]
+## Search by Linkedin Url [/api/graphql{?linkedinUrl}]
 
 Find a contact by linkedin url. 
 
@@ -417,7 +417,7 @@ Query Variables
 }
 ```
 
-### By linkedin url [POST]
+### Request [POST]
 
 Gives back a list of users based on the search input - linkedin url.
 
