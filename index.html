@@ -3,22 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <title>LeadIQ GraphQL - Contact Search</title>
+  <link rel="shortcut icon" type="image/png" href="https://account.leadiq.com/app/favicon.png"/>
 </head>
 <body>
   <script src="https://api.apiary.io/seeds/embed.js"></script>
   <script>
     var embed = new Apiary.Embed({
-        subdomain: 'dataiq',
-        customFonts: {
-          googleFonts: 'https://fonts.googleapis.com/css?family=Ubuntu'
+        "subdomain": "dataiq",
+        "preferences": {
+          "defaultHost": "production"
         },
-        theme: {
-          fontFamily: 'Ubuntu',
-          machineColumn: { // To change color of a title in Machine Column
-            content: {
-              blankSlate: {
-                title: {
-                  color: '#6B9617'
+        "hosts": [
+          "production"
+        ],
+        "codeExamples": [
+          "cUrl",
+          "javaScript",
+          "go",
+          "scala",
+          "java",
+          "python",
+          "ruby"
+        ],
+        "customFonts": {
+          "googleFonts": "https://fonts.googleapis.com/css?family=Roboto"
+        },
+        "theme": {
+          "fontFamily": "Roboto",
+          "machineColumn": {
+            "content": {
+              "blankSlate": {
+                "title": {
+                  "color": "#6B9617"
                 }
               }
             }
