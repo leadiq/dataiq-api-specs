@@ -247,7 +247,7 @@ Query Variables
         "firstName": "Melissa",
         "lastName": "Schwenker",
         "company": {
-            "Domain": "salesforce.com"
+            "domain": "salesforce.com"
         }
     }
 }
@@ -269,7 +269,7 @@ Gives back a list of users based on the search input - name and domain.
 
             {
                 "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value meta { sources { source } } } phones { value meta { sources { source } } } } } } }",
-                "variables": {"input": { "firstName":"Melissa", "lastName": "Schwenker", "company":{ "Domain": "salesforce.com" }}}
+                "variables": {"input": { "firstName":"Melissa", "lastName": "Schwenker", "company":{ "domain": "salesforce.com" }}}
             }
             
 
@@ -538,7 +538,7 @@ Gives back a list of users based on the search input - linkedin url.
 
 ## CompanyDetails
 + name (string)
-+ Domain (string)
++ domain (string)
 + linkedinId (string)
 + country (string)
 
