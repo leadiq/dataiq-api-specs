@@ -405,8 +405,8 @@ Query Variables
 
 {
     "input": {
-        "firstName": "Angelo",
-        "linkedinUrl": "https://www.linkedin.com/in/angelokh"
+        "fullName": "Niels",
+        "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324"
     }
 }
 ```
@@ -427,7 +427,7 @@ Gives back a list of users based on the search input - linkedin url.
 
             {
                 "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value meta { sources { source } } } phones { value meta { sources { source } } } } } } }",
-                "variables": {"input": { "firstName":"Angelo", "linkedinUrl": "https://www.linkedin.com/in/angelokh" }}
+                "variables": {"input": { "fullName": "Niels", "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324" }}
             }
 
 + Response 200 (application/json)
@@ -445,35 +445,42 @@ Gives back a list of users based on the search input - linkedin url.
                                 "currentPositions": [
                                     {
                                         "company": {
-                                            "domain": "leadiq.com",
+                                            "domain": "drc.dk",
                                             "emailDomains": null,
-                                            "industry": "Computer Software",
-                                            "name": "LeadIQ"
+                                            "industry": "Nonprofit Organization Management",
+                                            "name": "Danish Refugee Council / Dansk Flygtningehjælp"
                                         },
                                         "emails": [
                                             {
                                                 "meta": {
                                                     "sources": [
                                                         {
-                                                            "source": "leadiq-own-ev"
+                                                            "source": "leadiq-own-lc"
                                                         }
                                                     ]
                                                 },
-                                                "value": "angelo@leadiq.com"
+                                                "value": "niels.bentzen@drc.dk"
                                             }
                                         ],
                                         "phones": [],
-                                        "title": "Co-founder & CTO"
+                                        "title": "Program Advisor"
                                     }
                                 ],
-                                "id": "d063bcea-5258-41a3-ac19-fec286940181",
+                                "id": "a936b80a-14b2-4323-981b-cbc9d8c86972",
                                 "linkedin": {
-                                    "linkedinId": "4327441",
-                                    "linkedinUrl": "https://www.linkedin.com/in/angelokh"
+                                    "linkedinId": "84546029",
+                                    "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324",
+                                    "meta": {
+                                        "sources": [
+                                            {
+                                                "source": "lc_data"
+                                            }
+                                        ]
+                                    }
                                 },
                                 "name": {
-                                    "first": "Angelo",
-                                    "last": "Huang",
+                                    "first": "Niels",
+                                    "last": "Bentzen",
                                     "middle": null
                                 },
                                 "personalEmails": []
