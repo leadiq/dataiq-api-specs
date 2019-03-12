@@ -1,32 +1,41 @@
 FORMAT: 1A
-HOST: https://dataiq.leadiq.com
+HOST: https://api.leadiq.com
 
 # LeadIQ Contact Search
 
-This GraphQL API is designed to find a contact by name and company or linkedin url. A state-of-the-art technology is used to support tracking original data sources for email, phone and job changes. Contact Search is available starting October 2018 and new end points like account search (searched all contacts in one account) and data feedback will be provided in Q4 2018.
+This GraphQL API is designed to find a contact by name and company or linkedin url. A state-of-the-art technology is used to support tracking original data sources for email, phone and job changes. Contact Search is available starting October 2018 and new end points like account search (searched all contacts in one account) and data feedback will be provided in Q2 2019.
 
-| Features Supported |         Release Date          |
-|--------------------|-------------------------------|
-| **Contact Search** | October 2018                  |
-| **Account Search** | Q4 2018                       |
-| **Data Feeback**   | Q4 2018                       |
+Last update: March, 2019
 
 **Note**
+
 This documentation is to describe how to use the API and explain some of the design decisions. Tools like Insomnia or GraphQL Playground are privided as a more interactive way to explore GraphQL schema. For details, please see [Using GraphQL](#using-graphql).
 
+# HTTP Header
 
-# Authentication
-
-Authentication token must be sent in the request header.
-
-The **access token** can be requested at api-support at leadiq.com.
+Content type **application/json** must be sent in the request header.
 
 |    HTTP Header    |              Header Value             |
 |-------------------|---------------------------------------|
 | **Content-Type**  | _application/json_                    |
-| **Authorization** | _Bearer <your_access_token>_ |
 
-## Search by Name and Company [/api/graphql{?name_company}]
+# Authentication
+
+## Basic Auth protected resource [/protected]
+
+LeadIQ uses **HTTP BASIC Auth** for authenticating the API calls. The user name is your “API key” and the password is empty. The API key could be got from ‘Your API Key’ page.
+
+The **API token** can be requested at https://leadiq.com/enrichment-apis.
+
+AUTHENTICATION IN CURL
+
+For curl you could specify the API key using the -u option
+
+curl {api url} -u {api key}:
+
+Since the password is not present, nothing is specified after the colon(:)
+
+## Search by Name and Company [/graphql{?name_company}]
 
 Find a contact by name and company.
 
@@ -34,48 +43,61 @@ Find a contact by name and company.
 
 ```
 query SearchPeople($input: SearchPeopleInput!) {
-    searchPeople(input: $input) {
-        totalResults
-        hasMore
-        results {
-            id
-            name {
-                first
-                middle
-                last
-            }
-            personalEmails {
-                value
-            }
-            linkedin {
-                linkedinUrl
-                linkedinId
-            }
-            currentPositions {
-                title
-                company {
-                    name
-                    industry
-                }
-                emails {
-                    value
-                    meta {
-                        sources {
-                            source
-                        }
-                    }
-                }
-                phones {
-                    value
-                    meta {
-                        sources {
-                            source
-                        }
-                    }
-                }
-            }
+  searchPeople(input: $input) {
+    totalResults
+    hasMore
+    results {
+      _id
+      personalPhones {
+        value
+        type
+      }
+      name {
+        first
+        last
+      }
+      linkedin {
+        linkedinUrl
+        linkedinId
+      }
+      currentPositions {
+        title
+        dateRange {
+          start
+          end
         }
+        companyInfo {          
+          name
+          numberOfEmployees
+          industry
+          domain
+          address
+          country
+          logoUrl
+          phones          
+          locationInfo {
+            street1
+            street2
+            city
+            areaLevel1
+            country
+            postalCode
+            formattedAddress
+          }
+        }
+        emails {
+          value
+          type
+          status
+        }
+        phones {
+          value
+          type
+          status
+        }
+      }
     }
+  }
 }
 
 Query Variables
@@ -99,14 +121,14 @@ Gives back a list of users based on the search input - name and company.
 
     + Header 
             
-            Authorization: Bearer your_access_token
-
+            Authorization: Basic {api key}:
+                    
     + Attributes (SearchPeopleInput)
 
     + Body
 
             {
-                "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value type meta { sources { source } } } phones { value type meta { sources { source } } } } } } }",
+                "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { _id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title companyInfo { name industry } emails { value type status } phones { value type status } } } } }",
                 "variables": {"input": { "fullName": "Niels Bentzen", "company":{ "name": "Danish Refugee Council" }}}
             }
             
@@ -120,45 +142,44 @@ Gives back a list of users based on the search input - name and company.
             {
                 "data": {
                     "searchPeople": {
-                        "hasMore": false,
-                        "results": [
+                    "totalResults": 1,
+                    "hasMore": false,
+                    "results": [
+                        {
+                        "_id": "PersonID-d053d022-7a5d-4d74-80e9-bf05ffb0bd6e",
+                        "name": {
+                            "first": "Niels",
+                            "last": "Bentzen"
+                        },
+                        "linkedin": {
+                            "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324",
+                            "linkedinId": "84546029"
+                        },
+                        "currentPositions": [
                             {
-                                "currentPositions": [
-                                    {
-                                        "company": {
-                                            "industry": "Nonprofit Organization Management",
-                                            "name": "Danish Refugee Council / Dansk Flygtningehjælp"
-                                        },
-                                        "emails": [
-                                            {
-                                                "meta": {
-                                                    "sources": [
-                                                        {
-                                                            "source": "leadiq-own-lc"
-                                                        }
-                                                    ]
-                                                },
-                                                "value": "niels.bentzen@drc.dk"
-                                            }
-                                        ],
-                                        "phones": [],
-                                        "title": "Program Advisor"
-                                    }
-                                ],
-                                "id": "a936b80a-14b2-4323-981b-cbc9d8c86972",
-                                "linkedin": {
-                                    "linkedinId": "84546029",
-                                    "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324"
-                                },
-                                "name": {
-                                    "first": "Niels",
-                                    "last": "Bentzen",
-                                    "middle": null
-                                },
-                                "personalEmails": []
+                            "title": "Program Advisor",
+                            "companyInfo": {
+                                "name": "Danish Refugee Council / Dansk Flygtningehjælp",
+                                "industry": "Nonprofit Organization Management"
+                            },
+                            "emails": [
+                                {
+                                "value": "niels.bentzen@drc.dk",
+                                "type": "WorkEmail",
+                                "status": "Verified"
+                                }
+                            ],
+                            "phones": [
+                                {
+                                "value": "+45-33-73-50-00",
+                                "type": "WorkHQ",
+                                "status": "Verified"
+                                }
+                            ]
                             }
-                        ],
-                        "totalResults": 1
+                        ]
+                        }
+                    ]
                     }
                 }
             }            
@@ -187,7 +208,7 @@ Gives back a list of users based on the search input - name and company.
                 ]
             }
 
-## Search by Name and Domain [/api/graphql{?name_domain}]
+## Search by Name and Domain [/graphql{?name_domain}]
 
 Find a contact by name and domain.
 
@@ -195,48 +216,61 @@ Find a contact by name and domain.
 
 ```
 query SearchPeople($input: SearchPeopleInput!) {
-    searchPeople(input: $input) {
-        totalResults
-        hasMore
-        results {
-            id
-            name {
-                first
-                middle
-                last
-            }
-            personalEmails {
-                value
-            }
-            linkedin {
-                linkedinUrl
-                linkedinId
-            }
-            currentPositions {
-                title
-                company {
-                    name
-                    industry
-                }
-                emails {
-                    value
-                    meta {
-                        sources {
-                            source
-                        }
-                    }
-                }
-                phones {
-                    value
-                    meta {
-                        sources {
-                            source
-                        }
-                    }
-                }
-            }
+  searchPeople(input: $input) {
+    totalResults
+    hasMore
+    results {
+      _id
+      personalPhones {
+        value
+        type
+      }
+      name {
+        first
+        last
+      }
+      linkedin {
+        linkedinUrl
+        linkedinId
+      }
+      currentPositions {
+        title
+        dateRange {
+          start
+          end
         }
+        companyInfo {          
+          name
+          numberOfEmployees
+          industry
+          domain
+          address
+          country
+          logoUrl
+          phones          
+          locationInfo {
+            street1
+            street2
+            city
+            areaLevel1
+            country
+            postalCode
+            formattedAddress
+          }
+        }
+        emails {
+          value
+          type
+          status
+        }
+        phones {
+          value
+          type
+          status
+        }
+      }
     }
+  }
 }
 
 Query Variables
@@ -266,7 +300,7 @@ Gives back a list of users based on the search input - name and domain.
     + Body
 
             {
-                "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value type meta { sources { source } } } phones { value type meta { sources { source } } } } } } }",
+                "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { _id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title companyInfo { name industry } emails { value type status } phones { value type status } } } } }",
                 "variables": {"input": { "fullName": "Melissa Schwenker", "company":{ "domain": "salesforce.com" }}}
             }
             
@@ -280,92 +314,59 @@ Gives back a list of users based on the search input - name and domain.
             {
                 "data": {
                     "searchPeople": {
-                        "hasMore": false,
-                        "results": [
+                    "totalResults": 1,
+                    "hasMore": false,
+                    "results": [
+                        {
+                        "_id": "PersonID-fd1ed69b-1695-4079-a0d9-1d60a719fffb",
+                        "name": {
+                            "first": "Melissa",
+                            "last": "Schwenker"
+                        },
+                        "linkedin": {
+                            "linkedinUrl": "https://www.linkedin.com/in/melissa-schwenker-660b845",
+                            "linkedinId": "17840808"
+                        },
+                        "currentPositions": [
                             {
-                                "currentPositions": [
-                                    {
-                                        "company": {
-                                            "industry": "Internet",
-                                            "name": "Salesforce"
-                                        },
-                                        "emails": [
-                                            {
-                                                "meta": {
-                                                    "sources": [
-                                                        {
-                                                            "source": "leadiq-own-unknown"
-                                                        },
-                                                        {
-                                                            "source": "leadiq-vendor-em"
-                                                        },
-                                                        {
-                                                            "source": "leadiq-vendor-sg"
-                                                        },
-                                                        {
-                                                            "source": "leadiq-own-lc"
-                                                        }
-                                                    ]
-                                                },
-                                                "value": "mschwenker@salesforce.com"
-                                            }
-                                        ],
-                                        "phones": [
-                                            {
-                                                "meta": {
-                                                    "sources": [
-                                                        {
-                                                            "source": "leadiq-vendor-em"
-                                                        }
-                                                    ]
-                                                },
-                                                "value": "+1-312-288-3600"
-                                            },
-                                            {
-                                                "meta": {
-                                                    "sources": [
-                                                        {
-                                                            "source": "leadiq-vendor-em"
-                                                        }
-                                                    ]
-                                                },
-                                                "value": "+1-312-873-0640"
-                                            },
-                                            {
-                                                "meta": {
-                                                    "sources": [
-                                                        {
-                                                            "source": "leadiq-vendor-sg"
-                                                        }
-                                                    ]
-                                                },
-                                                "value": "+1-415-901-7000"
-                                            }
-                                        ],
-                                        "title": "Commercial Account Executive - Financial Services "
-                                    }
-                                ],
-                                "id": "0187781a-40f4-42b0-807a-0df874e9b841",
-                                "linkedin": {
-                                    "linkedinId": "17840808",
-                                    "linkedinUrl": "https://www.linkedin.com/in/melissa-schwenker-660b845"
+                            "title": "Commercial Account Executive - Financial Services",
+                            "companyInfo": {
+                                "name": "Salesforce",
+                                "industry": "Internet"
+                            },
+                            "emails": [
+                                {
+                                "value": "mschwenker@salesforce.com",
+                                "type": "WorkEmail",
+                                "status": "Verified"
+                                }
+                            ],
+                            "phones": [
+                                {
+                                "value": "+1-415-901-7000",
+                                "type": "WorkPhone",
+                                "status": "Verified"
                                 },
-                                "name": {
-                                    "first": "Melissa",
-                                    "last": "Schwenker",
-                                    "middle": null
+                                {
+                                "value": "+1-312-873-0640",
+                                "type": "WorkPhone",
+                                "status": "Verified"
                                 },
-                                "personalEmails": []
+                                {
+                                "value": "+1-312-288-3600",
+                                "type": "WorkPhone",
+                                "status": "Verified"
+                                },
+                                {
+                                "value": "+1-415-901-7000",
+                                "type": "WorkHQ",
+                                "status": "Verified"
+                                }
+                            ]
                             }
-                        ],
-                        "totalResults": 1
-                    }
-                },
-                "extensions": {
-                    "cost": {
-                        "emailCost": 1,
-                        "phoneCost": 3,
-                        "total": 4
+                        ]
+                        }
+                    ]
                     }
                 }
             }       
@@ -394,7 +395,7 @@ Gives back a list of users based on the search input - name and domain.
                 ]
             }
 
-## Search by Linkedin Url [/api/graphql{?linkedinUrl}]
+## Search by Linkedin Url [/graphql{?linkedinUrl}]
 
 Find a contact by linkedin url. 
 
@@ -430,8 +431,8 @@ Gives back a list of users based on the search input - linkedin url.
     + Body
 
             {
-                "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title company { name industry } emails { value type meta { sources { source } } } phones { value type meta { sources { source } } } } } } }",
-                "variables": {"input": { "linkedinUrl": "/in/niels-bentzen-12539324/", "containsWorkContactInfo": false }}
+                "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { _id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title companyInfo { name industry } emails { value type status } phones { value type status } } } } }",
+                "variables": {"input": { "linkedinUrl": "/in/niels-bentzen-12539324"}}
             }
 
 + Response 200 (application/json)
@@ -443,61 +444,44 @@ Gives back a list of users based on the search input - linkedin url.
             {
                 "data": {
                     "searchPeople": {
-                        "hasMore": false,
-                        "results": [
+                    "totalResults": 1,
+                    "hasMore": false,
+                    "results": [
+                        {
+                        "_id": "PersonID-d053d022-7a5d-4d74-80e9-bf05ffb0bd6e",
+                        "name": {
+                            "first": "Niels",
+                            "last": "Bentzen"
+                        },
+                        "linkedin": {
+                            "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324",
+                            "linkedinId": "84546029"
+                        },
+                        "currentPositions": [
                             {
-                                "currentPositions": [
-                                    {
-                                        "company": {
-                                            "domain": "drc.dk",
-                                            "emailDomains": null,
-                                            "industry": "Nonprofit Organization Management",
-                                            "name": "Danish Refugee Council / Dansk Flygtningehjælp"
-                                        },
-                                        "emails": [
-                                            {
-                                                "meta": {
-                                                    "sources": [
-                                                        {
-                                                            "source": "leadiq-own-lc"
-                                                        }
-                                                    ]
-                                                },
-                                                "value": "niels.bentzen@drc.dk"
-                                            }
-                                        ],
-                                        "phones": [],
-                                        "title": "Program Advisor"
-                                    }
-                                ],
-                                "id": "a936b80a-14b2-4323-981b-cbc9d8c86972",
-                                "linkedin": {
-                                    "linkedinId": "84546029",
-                                    "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324",
-                                    "meta": {
-                                        "sources": [
-                                            {
-                                                "source": "lc_data"
-                                            }
-                                        ]
-                                    }
-                                },
-                                "name": {
-                                    "first": "Niels",
-                                    "last": "Bentzen",
-                                    "middle": null
-                                },
-                                "personalEmails": []
+                            "title": "Program Advisor",
+                            "companyInfo": {
+                                "name": "Danish Refugee Council / Dansk Flygtningehjælp",
+                                "industry": "Nonprofit Organization Management"
+                            },
+                            "emails": [
+                                {
+                                "value": "niels.bentzen@drc.dk",
+                                "type": "WorkEmail",
+                                "status": "Verified"
+                                }
+                            ],
+                            "phones": [
+                                {
+                                "value": "+45-33-73-50-00",
+                                "type": "WorkHQ",
+                                "status": "Verified"
+                                }
+                            ]
                             }
-                        ],
-                        "totalResults": 1
-                    }
-                },
-                "extensions": {
-                    "cost": {
-                        "emailCost": 1,
-                        "phoneCost": 0,
-                        "total": 1
+                        ]
+                        }
+                    ]
                     }
                 }
             }
@@ -531,7 +515,7 @@ Gives back a list of users based on the search input - linkedin url.
 ## SearchPeopleInput
 + skip (number)
 + limit (number)
-+ firstName (required, string)
++ firstName (string)
 + lastName (string)
 + middleName (string)
 + fullName (string)
@@ -548,32 +532,33 @@ Gives back a list of users based on the search input - linkedin url.
 + country (string)
 
 ## PersonRecord
-+ id (required, string)
-+ name (required, NameInfo)
-+ version (required, number)
-+ currentPositions (required, array[PositionRecord])
-+ pastPositions (required, array[PositionRecord])
-+ personalEmails (required, array[EmailRecord])
-+ phones (required, array[PhoneRecord])
++ _id (string)
++ name (NameInfo)
++ currentPositions (array[PositionRecord])
++ pastPositions (array[PositionRecord])
 + linkedin (LinkedinRecord)
++ containsWorkContactInfo (boolean)
++ personalEmails (array[EmailRecord])
++ personalPhones (array[PhoneRecord])
 
 ## NameInfo
-+ first (required, string)
-+ fullName (required, string)
++ first (string)
++ fullName (string)
 + last (string)
 + middle (string)
 
 ## PositionRecord
-+ companyId (required, string)
-+ company (FlatCompanyForResponse)
++ companyId (string)
++ companyInfo (CompanyInfo)
 + title (string)
 + dateRange (DateRange)
-+ emails (required, array[EmailRecord])
-+ phones (required, array[PhoneRecord])
-+ meta (MetaRecord_PositionType_GenericStatusType)
++ emails (array[EmailRecord])
++ phones (array[PhoneRecord])
++ sources (array[SourceType_GenericFieldType_GenericFieldStatus])
++ updatedAt (string)
 
-## FlatCompanyForResponse
-+ name (required, string)
+## CompanyInfo
++ name (string)
 + alternativeNames (array[string])
 + domain (string)
 + emailDomains (array[string])
@@ -584,6 +569,7 @@ Gives back a list of users based on the search input - linkedin url.
 + locationInfo (LocationInfo)
 + logoUrl (string)
 + numberOfEmployees (number)
++ industry (string)
 
 ## LocationInfo
 + formattedAddress (string)
@@ -598,61 +584,47 @@ Gives back a list of users based on the search input - linkedin url.
 + start (number) - Timestamp
 + end (number) - Timestamp
 
-## `MetaRecord_PositionType_GenericStatusType`
-+ sources (required, SourceType_PositionType_GenericStatusType)
-+ lastUpdated (required, number) - Timestamp
+## `SourceType_GenericFieldType_GenericFieldStatus`
++ source (string)
++ type (GenericFieldType)
++ status (GenericStatusType)
++ providerIds (array[string])
++ updatedAt (string)
 
-## `SourceType_PositionType_GenericStatusType`
-+ source (required, string)
-+ type (required, PositionType)
-+ status (required, GenericStatusType)
-+ otherDetails (required, SourceDetails)
-
-## PositionType (enum[string])
-+ Current
-+ Past
+## GenericFieldType (enum[string])
++ NotApplicable
++ (EmailType)
++ (PhoneType)
 
 ## GenericStatusType (enum[string])
 + Valid
 + Invalid
-
-## SourceDetails
-+ providerIds (required, array[string])
++ (EmailVerificationStatus)
++ (PhoneVerificationStatusType)
 
 ## EmailRecord
-+ value (required, string)
-+ type (required, EmailType)
-+ status (required, EmailVerificationStatus)
-+ meta (required, MetaRecord_EmailType_EmailVerificationStatusType)
++ value (string)
++ type (EmailType)
++ status (EmailVerificationStatus)
++ sources (array[SourceType_GenericFieldType_GenericFieldStatus])
++ updatedAt (string)
 
 ## EmailType (enum[string])
 + WorkEmail
 + PersonalEmail
 
-## EmailVerificationStatus
-+ type (required, EmailVerificationStatusType)
-+ lastSeen (required, number) - Timestamp
-
-## EmailVerificationStatusType (enum[string])
+## EmailVerificationStatus (enum[string])
 + Verified
 + Unverified
 + VerifiedLikely
 + Invalid
 
-## `MetaRecord_EmailType_EmailVerificationStatusType`
-+ sources (required, array[SourceType_EmailType_EmailVerificationStatusType])
-+ lastUpdated (required, number) - Timestamp
-
-## `SourceType_EmailType_EmailVerificationStatusType`
-+ source (required, string)
-+ type (required, EmailType)
-+ status (required, EmailVerificationStatusType)
-+ otherDetails (required, SourceDetails)
-
 ## PhoneRecord
-+ value (required, string)
-+ type (required, PhoneType)
-+ meta (required, MetaRecord_PhoneType_GenericStatusType)
++ value (string)
++ type (PhoneType)
++ status (PhoneVerificationStatusType)
++ sources (array[SourceType_GenericFieldType_GenericFieldStatus])
++ updatedAt (string)
 
 ## PhoneType (enum[string])
 + WorkPhone
@@ -663,39 +635,23 @@ Gives back a list of users based on the search input - linkedin url.
 + PersonalPhone
 + WorkBranch
 
-## `MetaRecord_PhoneType_GenericStatusType`
-+ sources (required, array[SourceType_PhoneType_GenericStatusType])
-+ lastUpdated (required, number) - Timestamp
-
-## `SourceType_PhoneType_GenericStatusType`
-+ source (required, string)
-+ type (required, PhoneType)
-+ status (required, GenericStatusType)
-+ otherDetails (required, SourceDetails)
+## PhoneVerificationStatusType (enum[string])
++ Verified
++ Unverified
++ Invalid
 
 ## LinkedinRecord
 + linkedinId (string)
 + linkedinUrl (string)
-+ type (required, LinkedinType)
-+ meta (required, MetaRecord_LinkedinType_GenericStatusType)
-
-## LinkedinType (enum[string])
-+ NotApplicable
-
-## `MetaRecord_LinkedinType_GenericStatusType`
-+ sources (required, array[SourceType_LinkedinType_GenericStatusType])
-+ lastUpdated (required, number) - Timestamp
-
-## `SourceType_LinkedinType_GenericStatusType`
-+ source (required, string)
-+ type (required, LinkedinType)
-+ status (required, GenericStatusType)
-+ otherDetails (required, SourceDetails)
++ type (GenericFieldType)
++ status (GenericStatusType)
++ sources (array[SourceType_GenericFieldType_GenericFieldStatus])
++ updatedAt (string)
 
 ## SearchResult
-+ totalResults (required, number)
-+ hasMore (required, boolean)
-+ results (required, PersonRecord)
++ totalResults (number)
++ hasMore (boolean)
++ results (PersonRecord)
 
 
 # Group Using GraphQL
