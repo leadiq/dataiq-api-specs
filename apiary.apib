@@ -21,7 +21,7 @@ Content type **application/json** must be sent in the request header.
 
 # Authentication
 
-## Basic Auth protected resource [/protected]
+## Basic Auth protected resource
 
 LeadIQ uses **HTTP BASIC Auth** for authenticating the API calls. The user name is your “API key” and the password is empty. The API key could be got from ‘Your API Key’ page.
 
@@ -293,7 +293,7 @@ Gives back a list of users based on the search input - name and domain.
 
     + Header 
             
-            Authorization: Bearer your_access_token
+            Authorization: Basic {api key}:
 
     + Attributes (SearchPeopleInput)
 
@@ -424,7 +424,7 @@ Gives back a list of users based on the search input - linkedin url.
 
     + Header 
             
-            Authorization: Bearer your_access_token
+            Authorization: Basic {api key}:
 
     + Attributes (SearchPeopleInput)
 
