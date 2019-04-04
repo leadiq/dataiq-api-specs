@@ -1,11 +1,11 @@
 FORMAT: 1A
 HOST: https://api.leadiq.com
 
-# LeadIQ Contact Search
+# LeadIQ Search API
 
 This GraphQL API is designed to find a contact by name and company or linkedin url. A state-of-the-art technology is used to support tracking original data sources for email, phone and job changes. Contact Search is available starting October 2018 and new end points like account search (searched all contacts in one account) and data feedback will be provided in Q2 2019.
 
-Last update: March, 2019
+Last update: April, 2019
 
 **Note**
 
@@ -35,7 +35,7 @@ curl {api url} -u {api key}:
 
 Since the password is not present, nothing is specified after the colon(:)
 
-## Search by Name and Company [/graphql{?name_company}]
+## Search Contact by Name and Company [/graphql{?name_company}]
 
 Find a contact by name and company.
 
@@ -208,7 +208,7 @@ Gives back a list of users based on the search input - name and company.
                 ]
             }
 
-## Search by Name and Domain [/graphql{?name_domain}]
+## Search Contact by Name and Domain [/graphql{?name_domain}]
 
 Find a contact by name and domain.
 
@@ -395,7 +395,7 @@ Gives back a list of users based on the search input - name and domain.
                 ]
             }
 
-## Search by Linkedin Url [/graphql{?linkedinUrl}]
+## Search Contact by Linkedin Url [/graphql{?linkedinUrl}]
 
 Find a contact by linkedin url. 
 
@@ -422,8 +422,7 @@ Gives back a list of users based on the search input - linkedin url.
 
 + Request (application/json)
 
-    + Header 
-            
+    + Header
             Authorization: Basic {Base64 Encode(api key)}:
 
     + Attributes (SearchPeopleInput)
@@ -487,6 +486,210 @@ Gives back a list of users based on the search input - linkedin url.
             }
 
 + Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
++ Response 401 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
+## Search Company by Name
+
+Find a company by name.
+
+**Request Body**
+
+```
+Query Variables
+
+{
+    "input": {
+        "name": "leadiq"
+    }
+}
+```
+
+### Request [POST]
+
+Gives back one company based on the search input.
+
++ Request (application/json)
+
+    + Header
+            Authorization: Basic {Base64 Encode(api key)}:
+
+    + Attributes (SearchCompanyInput)
+
+    + Body
+            {
+              query SearchCompany($input: SearchCompanyInput!) {
+                searchCompany(input: $input) {
+                  results {
+                    name
+                    alternativeNames
+                    domain
+                    linkedinId
+                    locationInfo {
+                      city
+                      areaLevel1
+                      country
+                      postalCode
+                    }
+                    numberOfEmployees
+                    industry
+                  }
+                }
+              }
+            }
+
++ Response 200 (application/json)
+
+    + Attributes (SearchResult)
+
+    + Body
+
+            {
+                "data": {
+                    "searchCompany": {
+                      "results": [
+                        {
+                          "name": "LeadIQ",
+                          "alternativeNames": null,
+                          "domain": "leadiq.com",
+                          "linkedinId": "6412574",
+                          "locationInfo": {
+                            "city": "Redwood City",
+                            "areaLevel1": "California",
+                            "country": "us",
+                            "postalCode": "94063"
+                          },
+                          "numberOfEmployees": 27,
+                          "industry": "Computer Software"
+                        }
+                      ]
+                    }
+                  }
+            }
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
++ Response 401 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
+## Search Company by Domain
+
+Find a company by domain.
+
+**Request Body**
+
+```
+Query Variables
+
+{
+    "input": {
+        "domain": "leadiq.com"
+    }
+}
+```
+
+### Request [POST]
+
+Gives back one company based on the search input.
+
++ Request (application/json)
+
+    + Header
+            Authorization: Basic {Base64 Encode(api key)}:
+
+    + Attributes (SearchCompanyInput)
+
+    + Body
+            {
+              query SearchCompany($input: SearchCompanyInput!) {
+                searchCompany(input: $input) {
+                  results {
+                    name
+                    alternativeNames
+                    domain
+                    linkedinId
+                    locationInfo {
+                      city
+                      areaLevel1
+                      country
+                      postalCode
+                    }
+                    numberOfEmployees
+                    industry
+                  }
+                }
+              }
+            }
+
++ Response 200 (application/json)
+
+    + Attributes (SearchResult)
+
+    + Body
+
+            {
+                "data": {
+                    "searchCompany": {
+                      "results": [
+                        {
+                          "name": "LeadIQ",
+                          "alternativeNames": null,
+                          "domain": "leadiq.com",
+                          "linkedinId": "6412574",
+                          "locationInfo": {
+                            "city": "Redwood City",
+                            "areaLevel1": "California",
+                            "country": "us",
+                            "postalCode": "94063"
+                          },
+                          "numberOfEmployees": 27,
+                          "industry": "Computer Software"
+                        }
+                      ]
+                    }
+                  }
+            }
+
++ Response 400 (application/json)
     
     + Body
 
@@ -524,6 +727,12 @@ Gives back a list of users based on the search input - linkedin url.
 + linkedinUrl (string)
 + email (string)
 + containsWorkContactInfo (boolean)
+
+## SearchCompanyInput
++ name (string)
++ domain (string)
++ linkedinId (string)
++ country (string)
 
 ## CompanyDetails
 + name (string)
