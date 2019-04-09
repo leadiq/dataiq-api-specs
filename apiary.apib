@@ -293,7 +293,7 @@ Gives back a list of users based on the search input - name and domain.
 
     + Header 
             
-        Authorization: Basic {Base64 Encode(api key)}:
+            Authorization: Basic {Base64 Encode(api key)}:
 
     + Attributes (SearchPeopleInput)
 
@@ -671,8 +671,8 @@ Query Variables
 
 {
     "input": {
-        "workEmails": [],
-        "workPhones": []
+        "workEmails": ['nielsen@gmail.com'],
+        "workPhones": ['+123456789']
     }
 }
 ```
@@ -683,7 +683,7 @@ Query Variables
 
     + Header
 
-    Authorization: Basic {Base64 Encode(api key:)}:
+            Authorization: Basic {Base64 Encode(api key:)}:
 
     + Attributes (MarkAsInvalidInput)
 
