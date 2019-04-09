@@ -654,6 +654,69 @@ Gives back a list of users based on the search input - linkedin url.
 + results (PersonRecord)
 
 
+# LeadIQ Contact Feedback Service
+
+## Mark as invalid
+
+For given list of wrong work emails and phone numbers, makes feedback with these data marked as invalid.
+
+**Request Body**
+
+```
+mutation markAsInvalid($input: MarkAsInvalidInput!) {
+  markAsInvalid(input: $input)
+}
+
+Query Variables
+
+{
+    "input": {
+        "workEmails": ['nielsen@gmail.com'],
+        "workPhones": ['+123456789']
+    }
+}
+```
+
+### Request [POST]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Basic {Base64 Encode(api key:)}:
+
+    + Attributes (MarkAsInvalidInput)
+
+    + Body
+
+            {
+                "query": "mutation markAsInvalid($input: MarkAsInvalidInput!) {markAsInvalid(input: $input)}",
+                "variables": {"input": {"workEmails": [],"workPhones": []}}
+            }
+
+
++ Response 200 (application/json)
+
+    + Attributes (Boolean)
+
+    + Body
+
+            {
+                "data": {
+                    "markAsInvalid" : true
+                }
+            }
+
+
++ Response 400/401 (application/json)
+
+    + Body
+
+            {
+                "error": "error message"
+            }
+
+
 # Group Using GraphQL
 <a name="using-graphql"></a>
 
