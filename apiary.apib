@@ -1,11 +1,11 @@
 FORMAT: 1A
 HOST: https://api.leadiq.com
 
-# LeadIQ Contact Search
+# LeadIQ Search API
 
 This GraphQL API is designed to find a contact by name and company or linkedin url. A state-of-the-art technology is used to support tracking original data sources for email, phone and job changes. Contact Search is available starting October 2018 and new end points like account search (searched all contacts in one account) and data feedback will be provided in Q2 2019.
 
-Last update: March, 2019
+Last update: April, 2019
 
 **Note**
 
@@ -35,7 +35,7 @@ curl {api url} -u {api key}:
 
 Since the password is not present, nothing is specified after the colon(:)
 
-## Search by Name and Company [/graphql{?name_company}]
+## Search Contact by Name and Company [/graphql{?name_company}]
 
 Find a contact by name and company.
 
@@ -66,7 +66,7 @@ query SearchPeople($input: SearchPeopleInput!) {
           start
           end
         }
-        companyInfo {          
+        companyInfo {
           name
           numberOfEmployees
           industry
@@ -74,7 +74,7 @@ query SearchPeople($input: SearchPeopleInput!) {
           address
           country
           logoUrl
-          phones          
+          phones
           locationInfo {
             street1
             street2
@@ -119,10 +119,10 @@ Gives back a list of users based on the search input - name and company.
 
 + Request (application/json)
 
-    + Header 
-            
+    + Header
+
             Authorization: Basic {Base64 Encode(api key)}:
-                    
+
     + Attributes (SearchPeopleInput)
 
     + Body
@@ -131,7 +131,7 @@ Gives back a list of users based on the search input - name and company.
                 "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { _id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title companyInfo { name industry } emails { value type status } phones { value type status } } } } }",
                 "variables": {"input": { "fullName": "Niels Bentzen", "company":{ "name": "Danish Refugee Council" }}}
             }
-            
+
 
 + Response 200 (application/json)
 
@@ -182,10 +182,10 @@ Gives back a list of users based on the search input - name and company.
                     ]
                     }
                 }
-            }            
+            }
 
 + Response 400 (application/json)
-    
+
     + Body
 
             {
@@ -208,7 +208,7 @@ Gives back a list of users based on the search input - name and company.
                 ]
             }
 
-## Search by Name and Domain [/graphql{?name_domain}]
+## Search Contact by Name and Domain [/graphql{?name_domain}]
 
 Find a contact by name and domain.
 
@@ -239,7 +239,7 @@ query SearchPeople($input: SearchPeopleInput!) {
           start
           end
         }
-        companyInfo {          
+        companyInfo {
           name
           numberOfEmployees
           industry
@@ -247,7 +247,7 @@ query SearchPeople($input: SearchPeopleInput!) {
           address
           country
           logoUrl
-          phones          
+          phones
           locationInfo {
             street1
             street2
@@ -291,8 +291,8 @@ Gives back a list of users based on the search input - name and domain.
 
 + Request (application/json)
 
-    + Header 
-            
+    + Header
+
             Authorization: Basic {Base64 Encode(api key)}:
 
     + Attributes (SearchPeopleInput)
@@ -303,7 +303,7 @@ Gives back a list of users based on the search input - name and domain.
                 "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { _id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title companyInfo { name industry } emails { value type status } phones { value type status } } } } }",
                 "variables": {"input": { "fullName": "Melissa Schwenker", "company":{ "domain": "salesforce.com" }}}
             }
-            
+
 
 + Response 200 (application/json)
 
@@ -369,10 +369,10 @@ Gives back a list of users based on the search input - name and domain.
                     ]
                     }
                 }
-            }       
+            }
 
 + Response 400 (application/json)
-    
+
     + Body
 
             {
@@ -395,9 +395,9 @@ Gives back a list of users based on the search input - name and domain.
                 ]
             }
 
-## Search by Linkedin Url [/graphql{?linkedinUrl}]
+## Search Contact by Linkedin Url [/graphql{?linkedinUrl}]
 
-Find a contact by linkedin url. 
+Find a contact by linkedin url.
 
 **Refs**:
 1. Current version still requires you to pass in first name. This will be fixed in the next release.
@@ -422,8 +422,8 @@ Gives back a list of users based on the search input - linkedin url.
 
 + Request (application/json)
 
-    + Header 
-            
+
+    + Header
             Authorization: Basic {Base64 Encode(api key)}:
 
     + Attributes (SearchPeopleInput)
@@ -487,7 +487,7 @@ Gives back a list of users based on the search input - linkedin url.
             }
 
 + Response 400 (application/json)
-    
+
     + Body
 
             {
@@ -510,6 +510,288 @@ Gives back a list of users based on the search input - linkedin url.
                 ]
             }
 
+## Search Company by Name [/graphql{?company_name}]
+
+Find a company by name.
+
+**Request Body**
+
+```
+Query Variables
+
+{
+    "input": {
+        "name": "leadiq"
+    }
+}
+```
+
+### Request [POST]
+
+Gives back one company based on the search input.
+
++ Request (application/json)
+
+    + Header
+            Authorization: Basic {Base64 Encode(api key)}:
+
+    + Attributes (SearchCompanyInput)
+
+            + Body
+            {
+              query SearchCompany($input: SearchCompanyInput!) {
+                searchCompany(input: $input) {
+                  results {
+                    name
+                    alternativeNames
+                    domain
+                    linkedinId
+                    locationInfo {
+                      city
+                      areaLevel1
+                      country
+                      postalCode
+                    }
+                    numberOfEmployees
+                    industry
+                  }
+                }
+              }
+            }
+
++ Response 200 (application/json)
+
+    + Attributes (SearchResult)
+
+    + Body
+
+            {
+                "data": {
+                    "searchCompany": {
+                      "results": [
+                        {
+                          "name": "LeadIQ",
+                          "alternativeNames": null,
+                          "domain": "leadiq.com",
+                          "linkedinId": "6412574",
+                          "locationInfo": {
+                            "city": "Redwood City",
+                            "areaLevel1": "California",
+                            "country": "us",
+                            "postalCode": "94063"
+                          },
+                          "numberOfEmployees": 27,
+                          "industry": "Computer Software"
+                        }
+                      ]
+                    }
+                  }
+            }
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
++ Response 401 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
+## Search Company by Domain [/graphql{?company_domain}]
+
+Find a company by domain.
+
+**Request Body**
+
+```
+Query Variables
+
+{
+    "input": {
+        "domain": "leadiq.com"
+    }
+}
+```
+
+### Request [POST]
+
+Gives back one company based on the search input.
+
++ Request (application/json)
+
+    + Header
+        Authorization: Basic {Base64 Encode(api key)}:
+
+    + Attributes (SearchCompanyInput)
+
+        + Body
+            {
+              query SearchCompany($input: SearchCompanyInput!) {
+                searchCompany(input: $input) {
+                  results {
+                    name
+                    alternativeNames
+                    domain
+                    linkedinId
+                    locationInfo {
+                      city
+                      areaLevel1
+                      country
+                      postalCode
+                    }
+                    numberOfEmployees
+                    industry
+                  }
+                }
+              }
+            }
+
++ Response 200 (application/json)
+
+    + Attributes (SearchResult)
+
+    + Body
+
+            {
+                "data": {
+                    "searchCompany": {
+                      "results": [
+                        {
+                          "name": "LeadIQ",
+                          "alternativeNames": null,
+                          "domain": "leadiq.com",
+                          "linkedinId": "6412574",
+                          "locationInfo": {
+                            "city": "Redwood City",
+                            "areaLevel1": "California",
+                            "country": "us",
+                            "postalCode": "94063"
+                          },
+                          "numberOfEmployees": 27,
+                          "industry": "Computer Software"
+                        }
+                      ]
+                    }
+                  }
+            }
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
++ Response 401 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
+## Mark As Invalid Feedback [/graphql{?mark_as_invalid}]
+
+For given list of wrong work emails and phone numbers, makes feedback with these data marked as invalid.
+
+**Request Body**
+
+```
+mutation markAsInvalid($input: MarkAsInvalidInput!) {
+  markAsInvalid(input: $input)
+}
+
+Query Variables
+
+{
+    "input": {
+        "workEmails": ['nielsen@gmail.com'],
+        "workPhones": ['+123456789']
+    }
+}
+```
+
+### Request [POST]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Basic {Base64 Encode(api key:)}:
+
+    + Attributes (MarkAsInvalidInput)
+
+    + Body
+
+            {
+                "query": "mutation markAsInvalid($input: MarkAsInvalidInput!) {markAsInvalid(input: $input)}",
+                "variables": {"input": {"workEmails": [],"workPhones": []}}
+            }
+
+
++ Response 200 (application/json)
+
+    + Attributes (boolean)
+
+    + Body
+
+            {
+                "data": {
+                    "markAsInvalid" : true
+                }
+            }
+
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
+
++ Response 401 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
+
 # Data Structures
 
 ## SearchPeopleInput
@@ -524,6 +806,12 @@ Gives back a list of users based on the search input - linkedin url.
 + linkedinUrl (string)
 + email (string)
 + containsWorkContactInfo (boolean)
+
+## SearchCompanyInput
++ name (string)
++ domain (string)
++ linkedinId (string)
++ country (string)
 
 ## CompanyDetails
 + name (string)
@@ -653,75 +941,16 @@ Gives back a list of users based on the search input - linkedin url.
 + hasMore (boolean)
 + results (PersonRecord)
 
-
-# LeadIQ Contact Feedback Service
-
-## Mark as invalid
-
-For given list of wrong work emails and phone numbers, makes feedback with these data marked as invalid.
-
-**Request Body**
-
-```
-mutation markAsInvalid($input: MarkAsInvalidInput!) {
-  markAsInvalid(input: $input)
-}
-
-Query Variables
-
-{
-    "input": {
-        "workEmails": ['nielsen@gmail.com'],
-        "workPhones": ['+123456789']
-    }
-}
-```
-
-### Request [POST]
-
-+ Request (application/json)
-
-    + Header
-
-            Authorization: Basic {Base64 Encode(api key:)}:
-
-    + Attributes (MarkAsInvalidInput)
-
-    + Body
-
-            {
-                "query": "mutation markAsInvalid($input: MarkAsInvalidInput!) {markAsInvalid(input: $input)}",
-                "variables": {"input": {"workEmails": [],"workPhones": []}}
-            }
-
-
-+ Response 200 (application/json)
-
-    + Attributes (Boolean)
-
-    + Body
-
-            {
-                "data": {
-                    "markAsInvalid" : true
-                }
-            }
-
-
-+ Response 400/401 (application/json)
-
-    + Body
-
-            {
-                "error": "error message"
-            }
+## MarkAsInvalidInput
++ WorkEmails (array[string])
++ WorkPhones (array[string])
 
 
 # Group Using GraphQL
 <a name="using-graphql"></a>
 
 GraphQL is a web technology used to decouple the request/response structure from particular endpoints.
-It works by acting as a layer over existing request/response systems (most frequently HTTP) that allows the client to specify the type and structure of data that they wish to receive. 
+It works by acting as a layer over existing request/response systems (most frequently HTTP) that allows the client to specify the type and structure of data that they wish to receive.
 
 The server manages efficiently receiving queries and aggregating the requisite data for the client.
 
@@ -742,3 +971,4 @@ Here is the list of tools that you can download to explore GraphQL schema.
 
 - [Insomnia](https://insomnia.rest/graphql/)
 - [GraphQL Playground](https://github.com/prisma/graphql-playground)
+
