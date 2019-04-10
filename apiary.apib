@@ -406,12 +406,69 @@ Find a contact by linkedin url.
 **Request Body**
 
 ```
+query SearchPeople($input: SearchPeopleInput!) {
+  searchPeople(input: $input) {
+    totalResults
+    hasMore
+    results {
+      _id
+      personalPhones {
+        value
+        type
+      }
+      name {
+        first
+        last
+      }
+      linkedin {
+        linkedinUrl
+        linkedinId
+      }
+      currentPositions {
+        title
+        dateRange {
+          start
+          end
+        }
+        companyInfo {          
+          name
+          numberOfEmployees
+          industry
+          domain
+          address
+          country
+          logoUrl
+          phones          
+          locationInfo {
+            street1
+            street2
+            city
+            areaLevel1
+            country
+            postalCode
+            formattedAddress
+          }
+        }
+        emails {
+          value
+          type
+          status
+        }
+        phones {
+          value
+          type
+          status
+        }
+      }
+    }
+  }
+}
+
 Query Variables
 
 {
     "input": {
-        "linkedinUrl": "/in/niels-bentzen-12539324/",
-        "containsWorkContactInfo": false
+        "linkedinUrl": "/in/niels-bentzen-12539324/"
     }
 }
 ```
@@ -422,7 +479,8 @@ Gives back a list of users based on the search input - linkedin url.
 
 + Request (application/json)
 
-    + Header
+    + Header 
+            
             Authorization: Basic {Base64 Encode(api key)}:
 
     + Attributes (SearchPeopleInput)
@@ -509,13 +567,32 @@ Gives back a list of users based on the search input - linkedin url.
                 ]
             }
 
-## Search Company by Name
+## Search Company by Name [/graphql{?companyName}]
 
 Find a company by name.
 
 **Request Body**
 
 ```
+query SearchCompany($input: SearchCompanyInput!) {
+    searchCompany(input: $input) {
+        results {
+            name
+            alternativeNames
+            domain
+            linkedinId
+            locationInfo {
+                city
+                areaLevel1
+                country
+                postalCode
+            }
+            numberOfEmployees
+            industry
+        }
+    }
+}
+
 Query Variables
 
 {
@@ -531,16 +608,16 @@ Gives back one company based on the search input.
 
 + Request (application/json)
 
-    + Header
+    + Header 
+            
             Authorization: Basic {Base64 Encode(api key)}:
 
     + Attributes (SearchCompanyInput)
 
     + Body
+
             {
-              query SearchCompany($input: SearchCompanyInput!) {
-                searchCompany(input: $input) {
-                  results {
+                "query": "query SearchCompany($input: SearchCompanyInput!) { searchCompany(input: $input) { totalResults hasMore results { 
                     name
                     alternativeNames
                     domain
@@ -552,15 +629,13 @@ Gives back one company based on the search input.
                       postalCode
                     }
                     numberOfEmployees
-                    industry
-                  }
-                }
-              }
+                    industry } } } }",
+                "variables": {"input": { "name": "leadiq"}}
             }
 
 + Response 200 (application/json)
 
-    + Attributes (SearchResult)
+    + Attributes (CompanySearchResult)
 
     + Body
 
@@ -611,13 +686,32 @@ Gives back one company based on the search input.
                 ]
             }
 
-## Search Company by Domain
+## Search Company by Domain [/graphql{?companyDomain}]
 
 Find a company by domain.
 
 **Request Body**
 
 ```
+query SearchCompany($input: SearchCompanyInput!) {
+    searchCompany(input: $input) {
+        results {
+            name
+            alternativeNames
+            domain
+            linkedinId
+            locationInfo {
+                city
+                areaLevel1
+                country
+                postalCode
+            }
+            numberOfEmployees
+            industry
+        }
+    }
+}
+
 Query Variables
 
 {
@@ -633,16 +727,16 @@ Gives back one company based on the search input.
 
 + Request (application/json)
 
-    + Header
+    + Header 
+            
             Authorization: Basic {Base64 Encode(api key)}:
 
     + Attributes (SearchCompanyInput)
 
     + Body
+
             {
-              query SearchCompany($input: SearchCompanyInput!) {
-                searchCompany(input: $input) {
-                  results {
+                "query": "query SearchCompany($input: SearchCompanyInput!) { searchCompany(input: $input) { totalResults hasMore results { 
                     name
                     alternativeNames
                     domain
@@ -654,15 +748,13 @@ Gives back one company based on the search input.
                       postalCode
                     }
                     numberOfEmployees
-                    industry
-                  }
-                }
-              }
+                    industry } } } }",
+                "variables": {"input": { "domain": "leadiq.com"}}
             }
 
 + Response 200 (application/json)
 
-    + Attributes (SearchResult)
+    + Attributes (CompanySearchResult)
 
     + Body
 
@@ -711,6 +803,68 @@ Gives back one company based on the search input.
                         "message": "error message"
                     }
                 ]
+            }
+
+## Contact Feedback Service [/graphql{?feedback}]
+
+### Mark as invalid
+
+For given list of wrong work emails and phone numbers, makes feedback with these data marked as invalid.
+
+**Request Body**
+
+```
+mutation markAsInvalid($input: MarkAsInvalidInput!) {
+  markAsInvalid(input: $input)
+}
+
+Query Variables
+
+{
+    "input": {
+        "workEmails": ['nielsen@gmail.com'],
+        "workPhones": ['+123456789']
+    }
+}
+```
+
+### Request [POST]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Basic {Base64 Encode(api key:)}:
+
+    + Attributes (MarkAsInvalidInput)
+
+    + Body
+
+            {
+                "query": "mutation markAsInvalid($input: MarkAsInvalidInput!) {markAsInvalid(input: $input)}",
+                "variables": {"input": {"workEmails": [],"workPhones": []}}
+            }
+
+
++ Response 200 (application/json)
+
+    + Attributes (MarkAsInvalidResult)
+
+    + Body
+
+            {
+                "data": {
+                    "markAsInvalid" : true
+                }
+            }
+
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "error": "error message"
             }
 
 # Data Structures
@@ -862,69 +1016,20 @@ Gives back one company based on the search input.
 + hasMore (boolean)
 + results (PersonRecord)
 
+# CompanySearchResult
++ totalResults (number)
++ hasMore (boolean)
++ results (CompanyInfo)
 
-# LeadIQ Contact Feedback Service
+## MarkAsInvalidInput
++ workEmails (array[string])
++ workPhones (array[string])
 
-## Mark as invalid
+## MarkAsInvalidResult
+ + data (MarkAsInvalidResultRecord)
 
-For given list of wrong work emails and phone numbers, makes feedback with these data marked as invalid.
-
-**Request Body**
-
-```
-mutation markAsInvalid($input: MarkAsInvalidInput!) {
-  markAsInvalid(input: $input)
-}
-
-Query Variables
-
-{
-    "input": {
-        "workEmails": ['nielsen@gmail.com'],
-        "workPhones": ['+123456789']
-    }
-}
-```
-
-### Request [POST]
-
-+ Request (application/json)
-
-    + Header
-
-            Authorization: Basic {Base64 Encode(api key:)}:
-
-    + Attributes (MarkAsInvalidInput)
-
-    + Body
-
-            {
-                "query": "mutation markAsInvalid($input: MarkAsInvalidInput!) {markAsInvalid(input: $input)}",
-                "variables": {"input": {"workEmails": [],"workPhones": []}}
-            }
-
-
-+ Response 200 (application/json)
-
-    + Attributes (Boolean)
-
-    + Body
-
-            {
-                "data": {
-                    "markAsInvalid" : true
-                }
-            }
-
-
-+ Response 400/401 (application/json)
-
-    + Body
-
-            {
-                "error": "error message"
-            }
-
+## MarkAsInvalidResultRecord
+ + markAsInvalid (boolean)
 
 # Group Using GraphQL
 <a name="using-graphql"></a>
