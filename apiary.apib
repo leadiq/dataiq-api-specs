@@ -617,8 +617,7 @@ Gives back one company based on the search input.
     + Body
 
             {
-                "query": "query SearchCompany($input: SearchCompanyInput!) { searchCompany(input: $input) { totalResults hasMore results { 
-                    name alternativeNames domain linkedinId locationInfo { city areaLevel1 country postalCode } numberOfEmployees industry } } } }",
+                "query": "query SearchCompany($input: SearchCompanyInput!) { searchCompany(input: $input) { totalResults hasMore results { name alternativeNames domain linkedinId locationInfo { city areaLevel1 country postalCode } numberOfEmployees industry } } } }",
                 "variables": {"input": { "name": "leadiq"}}
             }
 
@@ -725,8 +724,7 @@ Gives back one company based on the search input.
     + Body
 
             {
-                "query": "query SearchCompany($input: SearchCompanyInput!) { searchCompany(input: $input) { totalResults hasMore results { 
-                    name alternativeNames domain linkedinId locationInfo { city areaLevel1 country postalCode } numberOfEmployees industry } } } }",
+                "query": "query SearchCompany($input: SearchCompanyInput!) { searchCompany(input: $input) { totalResults hasMore results { name alternativeNames domain linkedinId locationInfo { city areaLevel1 country postalCode } numberOfEmployees industry } } } }",
                 "variables": {"input": { "domain": "leadiq.com"}}
             }
 
