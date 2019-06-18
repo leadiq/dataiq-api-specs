@@ -66,7 +66,7 @@ query SearchPeople($input: SearchPeopleInput!) {
           start
           end
         }
-        companyInfo {          
+        companyInfo {
           name
           numberOfEmployees
           industry
@@ -74,7 +74,7 @@ query SearchPeople($input: SearchPeopleInput!) {
           address
           country
           logoUrl
-          phones          
+          phones
           locationInfo {
             street1
             street2
@@ -119,10 +119,10 @@ Gives back a list of users based on the search input - name and company.
 
 + Request (application/json)
 
-    + Header 
-            
+    + Header
+
             Authorization: Basic {Base64 Encode(api key)}:
-                    
+
     + Attributes (SearchPeopleInput)
 
     + Body
@@ -131,7 +131,7 @@ Gives back a list of users based on the search input - name and company.
                 "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { _id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title companyInfo { name industry } emails { value type status } phones { value type status } } } } }",
                 "variables": {"input": { "fullName": "Niels Bentzen", "company":{ "name": "Danish Refugee Council" }}}
             }
-            
+
 
 + Response 200 (application/json)
 
@@ -182,10 +182,10 @@ Gives back a list of users based on the search input - name and company.
                     ]
                     }
                 }
-            }            
+            }
 
 + Response 400 (application/json)
-    
+
     + Body
 
             {
@@ -239,7 +239,7 @@ query SearchPeople($input: SearchPeopleInput!) {
           start
           end
         }
-        companyInfo {          
+        companyInfo {
           name
           numberOfEmployees
           industry
@@ -247,7 +247,7 @@ query SearchPeople($input: SearchPeopleInput!) {
           address
           country
           logoUrl
-          phones          
+          phones
           locationInfo {
             street1
             street2
@@ -291,8 +291,8 @@ Gives back a list of users based on the search input - name and domain.
 
 + Request (application/json)
 
-    + Header 
-            
+    + Header
+
             Authorization: Basic {Base64 Encode(api key)}:
 
     + Attributes (SearchPeopleInput)
@@ -303,7 +303,7 @@ Gives back a list of users based on the search input - name and domain.
                 "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { _id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title companyInfo { name industry } emails { value type status } phones { value type status } } } } }",
                 "variables": {"input": { "fullName": "Melissa Schwenker", "company":{ "domain": "salesforce.com" }}}
             }
-            
+
 
 + Response 200 (application/json)
 
@@ -369,10 +369,10 @@ Gives back a list of users based on the search input - name and domain.
                     ]
                     }
                 }
-            }       
+            }
 
 + Response 400 (application/json)
-    
+
     + Body
 
             {
@@ -397,7 +397,7 @@ Gives back a list of users based on the search input - name and domain.
 
 ## Search Contact by Linkedin Url [/graphql{?linkedinUrl}]
 
-Find a contact by linkedin url. 
+Find a contact by linkedin url.
 
 **Refs**:
 1. Current version still requires you to pass in first name. This will be fixed in the next release.
@@ -430,7 +430,7 @@ query SearchPeople($input: SearchPeopleInput!) {
           start
           end
         }
-        companyInfo {          
+        companyInfo {
           name
           numberOfEmployees
           industry
@@ -438,7 +438,7 @@ query SearchPeople($input: SearchPeopleInput!) {
           address
           country
           logoUrl
-          phones          
+          phones
           locationInfo {
             street1
             street2
@@ -479,8 +479,8 @@ Gives back a list of users based on the search input - linkedin url.
 
 + Request (application/json)
 
-    + Header 
-            
+    + Header
+
             Authorization: Basic {Base64 Encode(api key)}:
 
     + Attributes (SearchPeopleInput)
@@ -569,6 +569,7 @@ Gives back a list of users based on the search input - linkedin url.
 
 ## Search Contact by Email [/graphql{?email}]
 
+Find a contact by email.
 
 **Request Body**
 
@@ -642,7 +643,7 @@ Query Variables
 
 ### Request [POST]
 
-Gives back a list of users based on the search input - linkedin url.
+Gives back a list of users based on the search input - email.
 
 + Request (application/json)
 
@@ -735,8 +736,183 @@ Gives back a list of users based on the search input - linkedin url.
             }
 
 
+## Filter Contacts by Email or Phone types [/graphql{?profileFilter}]
 
-"qweqwerqwrwqrqwqw"
+Additional field Query variables that filters contacts by email or phone.
+Profile Filter types :
+HasWorkEmail, HasWorkPhone,
+HasVerifiedWorkEmail, HasVerifiedWorkPhone,
+HasPersonalEmail, HasPersonalPhone
+
+
+**Request Body**
+
+```
+query SearchPeople($input: SearchPeopleInput!) {
+  searchPeople(input: $input) {
+    totalResults
+    hasMore
+    results {
+      _id
+      personalPhones {
+        value
+        type
+      }
+      name {
+        first
+        last
+      }
+      linkedin {
+        linkedinUrl
+        linkedinId
+      }
+      currentPositions {
+        title
+        dateRange {
+          start
+          end
+        }
+        companyInfo {
+          name
+          numberOfEmployees
+          industry
+          domain
+          address
+          country
+          logoUrl
+          phones
+          locationInfo {
+            street1
+            street2
+            city
+            areaLevel1
+            country
+            postalCode
+            formattedAddress
+          }
+        }
+        emails {
+          value
+          type
+          status
+        }
+        phones {
+          value
+          type
+          status
+        }
+      }
+    }
+  }
+}
+
+Query Variables
+
+{
+    "input": {
+        "email": "niels.bentzen@drc.dk"
+        "profileFilter" : ["HasWorkEmail", "HasPersonalEmail"]
+    }
+}
+```
+
+### Request [POST]
+
+Gives back a list of users based on the search input and profile filter - email.
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Basic {Base64 Encode(api key)}:
+
+    + Attributes (SearchPeopleInput)
+
+    + Body
+
+            {
+                "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { _id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title companyInfo { name industry } emails { value type status } phones { value type status } } } } }",
+                "variables": {"input": { "email": "niels.bentzen@drc.dk" , "profileFilter" : ["HasWorkEmail"]}}
+            }
+
++ Response 200 (application/json)
+
+    + Attributes (SearchResult)
+
+    + Body
+
+            {
+                "data": {
+                    "searchPeople": {
+                    "totalResults": 1,
+                    "hasMore": false,
+                    "results": [
+                        {
+                        "_id": "PersonID-d053d022-7a5d-4d74-80e9-bf05ffb0bd6e",
+                        "name": {
+                            "first": "Niels",
+                            "last": "Bentzen"
+                        },
+                        "linkedin": {
+                            "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324",
+                            "linkedinId": "84546029"
+                        },
+                        "currentPositions": [
+                            {
+                            "title": "Program Advisor",
+                            "companyInfo": {
+                                "name": "Danish Refugee Council / Dansk Flygtningehjælp",
+                                "industry": "Nonprofit Organization Management"
+                            },
+                            "emails": [
+                                {
+                                "value": "niels.bentzen@drc.dk",
+                                "type": "WorkEmail",
+                                "status": "Verified"
+                                }
+                            ],
+                            "phones": [
+                                {
+                                "value": "+45-33-73-50-00",
+                                "type": "WorkHQ",
+                                "status": "Verified"
+                                }
+                            ]
+                            }
+                        ]
+                        }
+                    ]
+                    }
+                }
+            }
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
++ Response 401 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
+
+
+
 
 ## Search Company by Name [/graphql{?companyName}]
 
@@ -779,8 +955,8 @@ Gives back one company based on the search input.
 
 + Request (application/json)
 
-    + Header 
-            
+    + Header
+
             Authorization: Basic {Base64 Encode(api key)}:
 
     + Attributes (SearchCompanyInput)
@@ -886,8 +1062,8 @@ Gives back one company based on the search input.
 
 + Request (application/json)
 
-    + Header 
-            
+    + Header
+
             Authorization: Basic {Base64 Encode(api key)}:
 
     + Attributes (SearchCompanyInput)
@@ -929,7 +1105,7 @@ Gives back one company based on the search input.
             }
 
 + Response 400 (application/json)
-    
+
     + Body
 
             {
@@ -1182,7 +1358,7 @@ Query Variables
 <a name="using-graphql"></a>
 
 GraphQL is a web technology used to decouple the request/response structure from particular endpoints.
-It works by acting as a layer over existing request/response systems (most frequently HTTP) that allows the client to specify the type and structure of data that they wish to receive. 
+It works by acting as a layer over existing request/response systems (most frequently HTTP) that allows the client to specify the type and structure of data that they wish to receive.
 
 The server manages efficiently receiving queries and aggregating the requisite data for the client.
 
