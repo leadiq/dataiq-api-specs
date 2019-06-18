@@ -567,6 +567,177 @@ Gives back a list of users based on the search input - linkedin url.
                 ]
             }
 
+## Search Contact by Email [/graphql{?email}]
+
+
+**Request Body**
+
+```
+query SearchPeople($input: SearchPeopleInput!) {
+  searchPeople(input: $input) {
+    totalResults
+    hasMore
+    results {
+      _id
+      personalPhones {
+        value
+        type
+      }
+      name {
+        first
+        last
+      }
+      linkedin {
+        linkedinUrl
+        linkedinId
+      }
+      currentPositions {
+        title
+        dateRange {
+          start
+          end
+        }
+        companyInfo {
+          name
+          numberOfEmployees
+          industry
+          domain
+          address
+          country
+          logoUrl
+          phones
+          locationInfo {
+            street1
+            street2
+            city
+            areaLevel1
+            country
+            postalCode
+            formattedAddress
+          }
+        }
+        emails {
+          value
+          type
+          status
+        }
+        phones {
+          value
+          type
+          status
+        }
+      }
+    }
+  }
+}
+
+Query Variables
+
+{
+    "input": {
+        "email": "niels.bentzen@drc.dk"
+    }
+}
+```
+
+### Request [POST]
+
+Gives back a list of users based on the search input - linkedin url.
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Basic {Base64 Encode(api key)}:
+
+    + Attributes (SearchPeopleInput)
+
+    + Body
+
+            {
+                "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { _id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title companyInfo { name industry } emails { value type status } phones { value type status } } } } }",
+                "variables": {"input": { "email": "niels.bentzen@drc.dk"}}
+            }
+
++ Response 200 (application/json)
+
+    + Attributes (SearchResult)
+
+    + Body
+
+            {
+                "data": {
+                    "searchPeople": {
+                    "totalResults": 1,
+                    "hasMore": false,
+                    "results": [
+                        {
+                        "_id": "PersonID-d053d022-7a5d-4d74-80e9-bf05ffb0bd6e",
+                        "name": {
+                            "first": "Niels",
+                            "last": "Bentzen"
+                        },
+                        "linkedin": {
+                            "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324",
+                            "linkedinId": "84546029"
+                        },
+                        "currentPositions": [
+                            {
+                            "title": "Program Advisor",
+                            "companyInfo": {
+                                "name": "Danish Refugee Council / Dansk Flygtningehjælp",
+                                "industry": "Nonprofit Organization Management"
+                            },
+                            "emails": [
+                                {
+                                "value": "niels.bentzen@drc.dk",
+                                "type": "WorkEmail",
+                                "status": "Verified"
+                                }
+                            ],
+                            "phones": [
+                                {
+                                "value": "+45-33-73-50-00",
+                                "type": "WorkHQ",
+                                "status": "Verified"
+                                }
+                            ]
+                            }
+                        ]
+                        }
+                    ]
+                    }
+                }
+            }
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
++ Response 401 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
+
+
+"qweqwerqwrwqrqwqw"
+
 ## Search Company by Name [/graphql{?companyName}]
 
 Find a company by name.
