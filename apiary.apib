@@ -27,18 +27,21 @@ LeadIQ uses **HTTP BASIC Auth** for authenticating the API calls. The user name 
 
 The **API key** can be requested by setting up your account through the "Get Started" link at https://leadiq.com/enrichment-apis.
 
-AUTHENTICATION IN CURL
+#### AUTHENTICATION IN CURL
 
 For curl you could specify the API key using the -u option:
 
+```
 curl --request POST --url https://api.leadiq.com/graphql -u '<api key>:' ...
+```
 
 Since the password is not present, nothing is specified after the colon(:)
 
 To use the api key in the authroization header instead you first need to base64 encode '<api key>:', and can then use it as below:
 
+```
 curl --request POST --url https://api.leadiq.com/graphql --header 'authorization: Basic base64(<api key>:)' ...
-
+```
 
 ## Search Contact by Name and Company [/graphql{?name_company}]
 
