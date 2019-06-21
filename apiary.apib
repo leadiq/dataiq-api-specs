@@ -5,11 +5,11 @@ HOST: https://api.leadiq.com
 
 This GraphQL API is designed to find a contact by name and company or linkedin url. A state-of-the-art technology is used to support tracking original data sources for email, phone and job changes. Contact Search is available starting October 2018 and new end points like account search (searched all contacts in one account) and data feedback will be provided in Q2 2019.
 
-Last update: April, 2019
+Last update: June, 2019
 
 **Note**
 
-This documentation is to describe how to use the API and explain some of the design decisions. Tools like Insomnia or GraphQL Playground are privided as a more interactive way to explore GraphQL schema. For details, please see [Using GraphQL](#using-graphql).
+This documentation is to describe how to use the API and explain some of the design decisions. Tools like Insomnia or GraphQL Playground are provided as a more interactive way to explore GraphQL schema. For details, please see [Using GraphQL](#using-graphql).
 
 # HTTP Header
 
@@ -23,17 +23,22 @@ Content type **application/json** must be sent in the request header.
 
 ## Basic Auth protected resource
 
-LeadIQ uses **HTTP BASIC Auth** for authenticating the API calls. The user name is your “API key” and the password is empty. The API key could be got from ‘Your API Key’ page.
+LeadIQ uses **HTTP BASIC Auth** for authenticating the API calls. The user name is your “API key” and the password is empty. The API key is displayed on the ‘Your API Key’ page.
 
-The **API token** can be requested at https://leadiq.com/enrichment-apis.
+The **API key** can be requested by setting up your account through the "Get Started" link at https://leadiq.com/enrichment-apis.
 
 AUTHENTICATION IN CURL
 
-For curl you could specify the API key using the -u option
+For curl you could specify the API key using the -u option:
 
-curl {api url} -u {api key}:
+curl --request POST --url https://api.leadiq.com/graphql -u '<api key>:' ...
 
 Since the password is not present, nothing is specified after the colon(:)
+
+To use the api key in the authroization header instead you first need to base64 encode '<api key>:', and can then use it as below:
+
+curl --request POST --url https://api.leadiq.com/graphql --header 'authorization: Basic base64(<api key>:)' ...
+
 
 ## Search Contact by Name and Company [/graphql{?name_company}]
 
@@ -121,7 +126,7 @@ Gives back a list of users based on the search input - name and company.
 
     + Header
 
-            Authorization: Basic {Base64 Encode(api key)}:
+            Authorization: Basic <Base64 Encode(api_key:)>
 
     + Attributes (SearchPeopleInput)
 
@@ -293,7 +298,7 @@ Gives back a list of users based on the search input - name and domain.
 
     + Header
 
-            Authorization: Basic {Base64 Encode(api key)}:
+            Authorization: Basic <Base64 Encode(api_key:)>
 
     + Attributes (SearchPeopleInput)
 
@@ -399,10 +404,6 @@ Gives back a list of users based on the search input - name and domain.
 
 Find a contact by linkedin url.
 
-**Refs**:
-1. Current version still requires you to pass in first name. This will be fixed in the next release.
-2. Linkedin url can't have the ending slash. This will be fixed in the next release.
-
 **Request Body**
 
 ```
@@ -481,7 +482,7 @@ Gives back a list of users based on the search input - linkedin url.
 
     + Header
 
-            Authorization: Basic {Base64 Encode(api key)}:
+            Authorization: Basic <Base64 Encode(api_key:)>
 
     + Attributes (SearchPeopleInput)
 
@@ -649,7 +650,7 @@ Gives back a list of users based on the search input - email.
 
     + Header
 
-            Authorization: Basic {Base64 Encode(api key)}:
+            Authorization: Basic <Base64 Encode(api_key:)>
 
     + Attributes (SearchPeopleInput)
 
@@ -738,12 +739,12 @@ Gives back a list of users based on the search input - email.
 
 ## Filter Contacts by Email or Phone types [/graphql{?profileFilter}]
 
-Additional field Query variables that filters contacts by email or phone.
-Profile Filter types :
-HasWorkEmail, HasWorkPhone,
-HasVerifiedWorkEmail, HasVerifiedWorkPhone,
-HasPersonalEmail, HasPersonalPhone
+Additional search input variables that filter contacts based on the presence of emails or phones.
 
+Different Profile Filters:
+HasWorkEmail, HasWorkPhone, HasVerifiedWorkEmail, HasVerifiedWorkPhone, HasPersonalEmail, HasPersonalPhone
+
+For example, including HasWorkEmail in the search input as a profile filter will make the api only look for contacts which have a work email. 
 
 **Request Body**
 
@@ -810,21 +811,21 @@ Query Variables
 
 {
     "input": {
-        "email": "niels.bentzen@drc.dk"
-        "profileFilter" : ["HasWorkEmail", "HasPersonalEmail"]
+        "linkedinUrl": "/in/niels-bentzen-12539324",
+        "profileFilter" : ["HasWorkEmail"]
     }
 }
 ```
 
 ### Request [POST]
 
-Gives back a list of users based on the search input and profile filter - email.
+Gives back a list of users based on the search input and profile filter.
 
 + Request (application/json)
 
     + Header
 
-            Authorization: Basic {Base64 Encode(api key)}:
+            Authorization: Basic <Base64 Encode(api_key:)>
 
     + Attributes (SearchPeopleInput)
 
@@ -832,7 +833,7 @@ Gives back a list of users based on the search input and profile filter - email.
 
             {
                 "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { _id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title companyInfo { name industry } emails { value type status } phones { value type status } } } } }",
-                "variables": {"input": { "email": "niels.bentzen@drc.dk" , "profileFilter" : ["HasWorkEmail"]}}
+                "variables": {"input": { "linkedinUrl": "/in/niels-bentzen-12539324" , "profileFilter" : ["HasWorkEmail"]}}
             }
 
 + Response 200 (application/json)
@@ -911,9 +912,6 @@ Gives back a list of users based on the search input and profile filter - email.
             }
 
 
-
-
-
 ## Search Company by Name [/graphql{?companyName}]
 
 Find a company by name.
@@ -957,7 +955,7 @@ Gives back one company based on the search input.
 
     + Header
 
-            Authorization: Basic {Base64 Encode(api key)}:
+            Authorization: Basic <Base64 Encode(api_key:)>
 
     + Attributes (SearchCompanyInput)
 
@@ -1064,7 +1062,7 @@ Gives back one company based on the search input.
 
     + Header
 
-            Authorization: Basic {Base64 Encode(api key)}:
+            Authorization: Basic <Base64 Encode(api_key:)>
 
     + Attributes (SearchCompanyInput)
 
@@ -1132,7 +1130,7 @@ Gives back one company based on the search input.
 
 ### Mark as invalid
 
-For given list of wrong work emails and phone numbers, makes feedback with these data marked as invalid.
+For given list of incorrect work emails and phone numbers, creates a feedback to mark them as invalid.
 
 **Request Body**
 
@@ -1190,6 +1188,164 @@ Query Variables
                 "error": "error message"
             }
 
+
+## Premium Data 
+
+### Premium Data Add Ons 
+
+Different types of premium data can be requested (usually at an additional cost) by specifying the premiumDataAddOns field on the search input.
+
+Different premium data fields: 
+
+- MobilePhone: Adds premium personal mobile phones to the personalPhones field on the PersonRecord
+
+Note that premium usage is not allowed for a trial user by default so you need to speak with someone on our team to enable it for you. 
+
+**Request Body**
+
+```
+query SearchPeople($input: SearchPeopleInput!) {
+  searchPeople(input: $input) {
+    totalResults
+    hasMore
+    results {
+      _id
+      personalPhones {
+        value
+        type
+      }
+      name {
+        first
+        last
+      }
+      linkedin {
+        linkedinUrl
+        linkedinId
+      }
+      currentPositions {
+        title
+        dateRange {
+          start
+          end
+        }
+        companyInfo {
+          name
+          numberOfEmployees
+          industry
+          domain
+          address
+          country
+          logoUrl
+          phones
+          locationInfo {
+            street1
+            street2
+            city
+            areaLevel1
+            country
+            postalCode
+            formattedAddress
+          }
+        }
+        emails {
+          value
+          type
+          status
+        }
+        phones {
+          value
+          type
+          status
+        }
+      }
+    }
+  }
+}
+
+Query Variables
+
+{
+    "input": {
+        "linkedinUrl": "/in/angelokh",
+        "premiumDataAddOns": ["MobilePhone"]
+    }
+}
+```
+
+### Request [POST]
+
+Gives back a list of users based on the search input - linkedin url.
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Basic <Base64 Encode(api_key:)>
+
+    + Attributes (SearchPeopleInput)
+
+    + Body
+
+            {
+                "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { results { name { fullName } personalPhones { value type status } } } } }",
+                "variables": {"input": { "linkedinUrl": "/in/angelokh", "premiumDataAddOns": ["MobilePhone"]}}
+            }
+
++ Response 200 (application/json)
+
+    + Attributes (SearchResult)
+
+    + Body
+
+            {
+                "data": {
+                    "searchPeople": {
+                        "results": [
+                            {
+                                "name": {
+                                    "fullName": "Angelo Huang"
+                                },
+                                "personalPhones": [
+                                    {
+                                        "status": "Verified",
+                                        "type": "PersonalMobile",
+                                        "value": "+1 408-637-0585"
+                                    },
+                                    {
+                                        "status": "Verified",
+                                        "type": "PersonalMobile",
+                                        "value": "+1 408-505-2613"
+                                    },
+                                    {
+                                        "status": "Verified",
+                                        "type": "PersonalMobile",
+                                        "value": "+1 408-505-7325"
+                                    },
+                                    {
+                                        "status": "Verified",
+                                        "type": "PersonalPhone",
+                                        "value": "+1 510-397-8860"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
+
+
 # Data Structures
 
 ## SearchPeopleInput
@@ -1204,6 +1360,19 @@ Query Variables
 + linkedinUrl (string)
 + email (string)
 + containsWorkContactInfo (boolean)
++ profileFilter (array[ProfileFilterType])
++ premiumDataAddOns (array[PremiumDataField])
+
+## ProfileFilterType (enum[string])
++ HasWorkEmail (string)
++ HasWorkPhone (string)
++ HasPersonalEmail (string)
++ HasPersonalEmail (string)
++ HasVerifiedWorkEmail (string)
++ HasVerifiedWorkPhone (string)
+
+## PremiumDataField (enum[string])
++ MobilePhone (string)
 
 ## SearchCompanyInput
 + name (string)
