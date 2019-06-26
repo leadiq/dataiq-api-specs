@@ -1428,6 +1428,7 @@ Gives back a list of users based on the search input - linkedin url.
 + logoUrl (string)
 + numberOfEmployees (number)
 + industry (string)
++ fundingInfo (FundingInfo)
 
 ## LocationInfo
 + formattedAddress (string)
@@ -1437,6 +1438,11 @@ Gives back a list of users based on the search input - linkedin url.
 + areaLevel1 (string)
 + country (string)
 + postalCode (string)
+
+## FundingInfo
++ fundingRounds (string)
++ fundingTotalUsd (number)
++ lastFundingOn - Timestamp
 
 ## DateRange
 + start (number) - Timestamp
@@ -1499,6 +1505,7 @@ Gives back a list of users based on the search input - linkedin url.
 + Invalid
 
 ## LinkedinRecord
++ guid (string)
 + linkedinId (string)
 + linkedinUrl (string)
 + type (GenericFieldType)
