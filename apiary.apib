@@ -65,6 +65,7 @@ query SearchPeople($input: SearchPeopleInput!) {
         last
       }
       linkedin {
+        guid
         linkedinUrl
         linkedinId
       }
@@ -107,14 +108,12 @@ query SearchPeople($input: SearchPeopleInput!) {
     }
   }
 }
-
 Query Variables
-
 {
     "input": {
-        "fullName": "Niels Bentzen",
+        "fullName": "Melissa Schwenker",
         "company": {
-            "name": "Danish Refugee Council"
+            "name": "Salesforce"
         }
     }
 }
@@ -137,7 +136,7 @@ Gives back a list of users based on the search input - name and company.
 
             {
                 "query": "query SearchPeople($input: SearchPeopleInput!) { searchPeople(input: $input) { totalResults hasMore results { _id name { first last } linkedin { linkedinUrl linkedinId } currentPositions { title companyInfo { name industry } emails { value type status } phones { value type status } } } } }",
-                "variables": {"input": { "fullName": "Niels Bentzen", "company":{ "name": "Danish Refugee Council" }}}
+                "variables": {"input": { "fullName": "Melissa Schwenker", "company":{ "name": "Salesforce" }}}
             }
 
 
@@ -156,34 +155,45 @@ Gives back a list of users based on the search input - name and company.
                         {
                         "_id": "PersonID-d053d022-7a5d-4d74-80e9-bf05ffb0bd6e",
                         "name": {
-                            "first": "Niels",
-                            "last": "Bentzen"
+                            "first": "Melissa",
+                            "last": "Schwenker"
                         },
                         "linkedin": {
-                            "linkedinUrl": "https://www.linkedin.com/in/niels-bentzen-12539324",
-                            "linkedinId": "84546029"
+                            "guid": "ACwAAAEQOqgBMDtkCuiNKmI703M0_f-OlGnlIaY",
+                            "linkedinId": "17840808",
+                            "linkedinUrl": "https://www.linkedin.com/in/melissa-schwenker-660b845"
                         },
                         "currentPositions": [
                             {
-                            "title": "Program Advisor",
-                            "companyInfo": {
-                                "name": "Danish Refugee Council / Dansk Flygtningehjælp",
-                                "industry": "Nonprofit Organization Management"
-                            },
-                            "emails": [
-                                {
-                                "value": "niels.bentzen@drc.dk",
-                                "type": "WorkEmail",
-                                "status": "Verified"
-                                }
-                            ],
-                            "phones": [
-                                {
-                                "value": "+45-33-73-50-00",
-                                "type": "WorkHQ",
-                                "status": "Verified"
-                                }
-                            ]
+                              "title": "Commercial Account Executive - Financial Services",
+                              "companyInfo": {
+                                  "name": "Salesforce",
+                                  "industry": "Internet"
+                              },
+                              "emails": [
+                                  {
+                                    "status": "Verified",
+                                    "type": "WorkEmail",
+                                    "value": "mschwenker@salesforce.com
+                                  }
+                              ],
+                              "phones": [
+                                  {
+                                    "status": "Verified",
+                                    "type": "WorkPhone",
+                                    "value": "+1-312-288-3600"
+                                  },
+                                  {
+                                    "status": "Verified",
+                                    "type": "WorkPhone",
+                                    "value": "+1-312-873-0640"
+                                  },
+                                  {
+                                    "status": "Verified",
+                                    "type": "WorkPhone",
+                                    "value": "+1-415-901-7000"
+                                  }
+                              ]
                             }
                         ]
                         }
@@ -238,6 +248,7 @@ query SearchPeople($input: SearchPeopleInput!) {
         last
       }
       linkedin {
+        guid
         linkedinUrl
         linkedinId
       }
@@ -280,9 +291,7 @@ query SearchPeople($input: SearchPeopleInput!) {
     }
   }
 }
-
 Query Variables
-
 {
     "input": {
         "fullName": "Melissa Schwenker"
@@ -328,15 +337,16 @@ Gives back a list of users based on the search input - name and domain.
                         {
                         "_id": "PersonID-fd1ed69b-1695-4079-a0d9-1d60a719fffb",
                         "name": {
-                            "first": "Melissa",
-                            "last": "Schwenker"
+                          "first": "Melissa",
+                          "last": "Schwenker"
                         },
                         "linkedin": {
-                            "linkedinUrl": "https://www.linkedin.com/in/melissa-schwenker-660b845",
-                            "linkedinId": "17840808"
+                          "guid": "ACwAAAEQOqgBMDtkCuiNKmI703M0_f-OlGnlIaY",
+                          "linkedinUrl": "https://www.linkedin.com/in/melissa-schwenker-660b845",
+                          "linkedinId": "17840808"
                         },
                         "currentPositions": [
-                            {
+                          {
                             "title": "Commercial Account Executive - Financial Services",
                             "companyInfo": {
                                 "name": "Salesforce",
@@ -351,27 +361,22 @@ Gives back a list of users based on the search input - name and domain.
                             ],
                             "phones": [
                                 {
-                                "value": "+1-415-901-7000",
-                                "type": "WorkPhone",
-                                "status": "Verified"
+                                  "value": "+1-415-901-7000",
+                                  "type": "WorkPhone",
+                                  "status": "Verified"
                                 },
                                 {
-                                "value": "+1-312-873-0640",
-                                "type": "WorkPhone",
-                                "status": "Verified"
+                                  "value": "+1-312-873-0640",
+                                  "type": "WorkPhone",
+                                  "status": "Verified"
                                 },
                                 {
-                                "value": "+1-312-288-3600",
-                                "type": "WorkPhone",
-                                "status": "Verified"
-                                },
-                                {
-                                "value": "+1-415-901-7000",
-                                "type": "WorkHQ",
-                                "status": "Verified"
+                                  "value": "+1-312-288-3600",
+                                  "type": "WorkPhone",
+                                  "status": "Verified"
                                 }
-                            ]
-                            }
+                              ]
+                          }
                         ]
                         }
                     ]
@@ -467,9 +472,7 @@ query SearchPeople($input: SearchPeopleInput!) {
     }
   }
 }
-
 Query Variables
-
 {
     "input": {
         "linkedinUrl": "/in/niels-bentzen-12539324/"
@@ -635,9 +638,7 @@ query SearchPeople($input: SearchPeopleInput!) {
     }
   }
 }
-
 Query Variables
-
 {
     "input": {
         "email": "niels.bentzen@drc.dk"
@@ -809,9 +810,7 @@ query SearchPeople($input: SearchPeopleInput!) {
     }
   }
 }
-
 Query Variables
-
 {
     "input": {
         "linkedinUrl": "/in/niels-bentzen-12539324",
@@ -940,9 +939,7 @@ query SearchCompany($input: SearchCompanyInput!) {
         }
     }
 }
-
 Query Variables
-
 {
     "input": {
         "name": "leadiq"
@@ -1047,9 +1044,7 @@ query SearchCompany($input: SearchCompanyInput!) {
         }
     }
 }
-
 Query Variables
-
 {
     "input": {
         "domain": "leadiq.com"
@@ -1141,9 +1136,7 @@ For given list of incorrect work emails and phone numbers, creates a feedback to
 mutation markAsInvalid($input: MarkAsInvalidInput!) {
   markAsInvalid(input: $input)
 }
-
 Query Variables
-
 {
     "input": {
         "workEmails": ['nielsen@gmail.com'],
@@ -1264,9 +1257,7 @@ query SearchPeople($input: SearchPeopleInput!) {
     }
   }
 }
-
 Query Variables
-
 {
     "input": {
         "linkedinUrl": "/in/angelokh",
@@ -1277,7 +1268,7 @@ Query Variables
 
 ### Request [POST]
 
-Gives back a list of users based on the search input - linkedin url.
+Gives back a list of users based on the search input - linkedin url with premium mobile phones.
 
 + Request (application/json)
 
@@ -1346,6 +1337,107 @@ Gives back a list of users based on the search input - linkedin url.
                         "message": "error message"
                     }
                 ]
+            }
+
+
+## Meta Queries [/graphql{?meta}]
+
+### Usage
+
+Usage meta query can be useful for tracking billable(or trial) usage so far, knowing the caps on different usages and know your subscription related information.
+
+The `planUsage` field takes an optional from parameter which when not provided gives the usage for the current period (to be billed)
+
+** Request Body ** 
+
+```
+query Usage {
+  usage {
+    planUsage {
+      name
+      usageType
+      units
+      cap
+    }
+    trialUsage { 
+      name
+      usageType
+      calls
+      cap
+    }
+    subscription {
+      status
+    }
+  }
+}
+```
+
+### Request [POST]
+
+Gives back the different usage information for the user who is the owner of the used api key.
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Basic <Base64 Encode(api_key:)>
+
+    + Attributes (SearchPeopleInput)
+
+    + Body
+
+            {
+                "query": "query Usage { usage { planUsage { name usageType units cap } trialUsage { name usageType calls cap } subscription { status } }",
+                "variables": {}
+            }
+
++ Response 200 (application/json)
+
+    + Attributes (UsageMeta)
+
+    + Body
+
+            {
+                "data": {
+                    "usage": {
+                        "planUsage": [
+                            {
+                                "cap": null,
+                                "name": "Contact",
+                                "units": 100,
+                                "usageType": "Standard"
+                            },
+                            {
+                                "cap": null,
+                                "name": "Company",
+                                "units": 15,
+                                "usageType": "Standard"
+                            },
+                            {
+                                "cap": null,
+                                "name": "PremiumMobilePhone",
+                                "units": 4,
+                                "usageType": "Premium"
+                            }
+                        ],
+                        "subscription": {
+                            "subscriptionStatus": "Active"
+                        },
+                        "trialUsage": [
+                            {
+                                "calls": 1000,
+                                "cap": 5001,
+                                "name": "API",
+                                "usageType": "Standard"
+                            },
+                            {
+                                "calls": 10,
+                                "cap": 15,
+                                "name": "PremiumMobilePhone",
+                                "usageType": "Premium"
+                            }
+                        ]
+                }
             }
 
 
@@ -1528,10 +1620,40 @@ Gives back a list of users based on the search input - linkedin url.
 + workPhones (array[string])
 
 ## MarkAsInvalidResult
- + data (MarkAsInvalidResultRecord)
++ data (MarkAsInvalidResultRecord)
 
 ## MarkAsInvalidResultRecord
- + markAsInvalid (boolean)
++ markAsInvalid (boolean)
+
+## ApiName (enum[string])
++ Contact
++ Company 
++ PremiumMobilePhone
++ API
+
+## ApiUsageType (enum[string])
++ Standard
++ Premium
+
+## PlanUsage
++ name (ApiName)
++ usageType (ApiUsageType)
++ units (number)
++ cap (number)
+
+## TrialUsage
++ name (ApiName)
++ usageType (ApiUsageType)
++ calls (number)
++ cap (number)
+
+## Subscription
++ status (string)
+
+## UsageMeta
++ planUsage (PlanUsage)
++ trialUsage (TrialUsage)
++ subscription (Subscription)
 
 # Group Using GraphQL
 <a name="using-graphql"></a>
