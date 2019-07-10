@@ -3,9 +3,9 @@ HOST: https://api.leadiq.com
 
 # LeadIQ Search API
 
-This GraphQL API is designed to find a contact by name and company or linkedin url. A state-of-the-art technology is used to support tracking original data sources for email, phone and job changes. Contact Search is available starting October 2018 and new end points like account search (searched all contacts in one account) and data feedback will be provided in Q2 2019.
+This GraphQL API is designed to find a contact by name and company or linkedin url. A state-of-the-art technology is used to support tracking original data sources for email, phone and job changes. There are mainly 3 kinds of APIs - contact search, advanced Search (searched all contacts in one account) and data feedback.
 
-Last update: June, 2019
+Last update: July 10, 2019
 
 **Note**
 
@@ -1339,6 +1339,140 @@ Gives back a list of users based on the search input - linkedin url with premium
                 ]
             }
 
+## Advanced Search [/graphql{?advsearch}]
+
+### Advanced Search
+
+Advanced Search queries lets you query company details along with the top n contacts in that company that match the search criteria.
+
+The search input accepts two filters `CompanyFilter` and `ContactFilter` which are used for matching the company and the contact respectively. For example, the following search input will look for contacts with the title as “Software Engineer” in the company “LeadIQ”:
+
+**Request Body**
+
+```
+query AdvancedSearch($input: GroupedSearchInput!) {
+  groupedAdvancedSearch(input: $input) {
+    totalCompanies
+    companies {
+      company {
+        id
+        name
+        industry
+        linkedinId
+        domain
+        employeeCount
+        country
+        state
+      }
+      people {
+        id
+        name
+        title
+        linkedinId
+        linkedinUrl
+        workEmails
+        workPhones
+        personalEmails
+        personalPhones
+      }
+    }
+  }
+}
+
+Query variables: 
+{
+    "input": {
+        "companyFilter": {
+            "names": [
+                "LeadIQ"
+            ]
+        },
+        "contactFilter": {
+            "titles": ["founder"]
+        },
+    "limitPerCompany": 1,
+    "sortContactsBy" : ["NameAsc"]
+    }
+}
+```
+
+### Request [POST]
+
+Lets you query company details along with the top n contacts in that company that match the search criteria
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Basic <Base64 Encode(api_key:)>
+
+    + Attributes (GroupedSearchInput)
+
+    + Body
+
+            {
+                "query": "query AdvancedSearch($input: GroupedSearchInput!) {  groupedAdvancedSearch(input: $input) { totalCompanies companies { company { id name industry linkedinId domain employeeCount country state } people { id name title linkedinId linkedinUrl workEmails workPhones personalEmails personalPhones } } }}",
+                "variables": {"input":{"companyFilter":{"names":["LeadIQ"]},"contactFilter":{"titles":["founder"]},"limitPerCompany":1,"sortContactsBy":["NameAsc"]}},"operationName":"AdvancedSearch"}
+            }
+
++ Response 200 (application/json)
+
+    + Attributes (SearchResult)
+
+    + Body
+
+            {
+                "data": {
+                    "groupedAdvancedSearch": {
+                    "companies": [
+                        {
+                        "company": {
+                            "country": "United States",
+                            "domain": "leadiq.com",
+                            "employeeCount": 11,
+                            "id": "MergedCompany-5a1d9d8723000053008d6154",
+                            "industry": "Computer Software",
+                            "linkedinId": "6412574",
+                            "name": "LeadIQ",
+                            "state": "California"
+                        },
+                        "people": [
+                            {
+                            "id": "PersonID-daf7215b-b37c-4a9c-b847-032d4c98c073",
+                            "linkedinId": "4327441",
+                            "linkedinUrl": "https://www.linkedin.com/in/angelokh",
+                            "name": "Angelo Huang",
+                            "personalEmails": [
+                                "hidden"
+                            ],
+                            "personalPhones": null,
+                            "title": "Founder",
+                            "workEmails": [
+                                "hidden"
+                            ],
+                            "workPhones": [
+                                "hidden"
+                            ]
+                            }
+                        ]
+                        }
+                    ],
+                    "totalCompanies": 1
+                    }
+                }
+                }
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": [
+                    {
+                        "message": "error message"
+                    }
+                ]
+            }
 
 ## Meta Queries [/graphql{?meta}]
 
@@ -1610,7 +1744,7 @@ Gives back the different usage information for the user who is the owner of the 
 + hasMore (boolean)
 + results (PersonRecord)
 
-# CompanySearchResult
+## CompanySearchResult
 + totalResults (number)
 + hasMore (boolean)
 + results (CompanyInfo)
@@ -1654,6 +1788,51 @@ Gives back the different usage information for the user who is the owner of the 
 + planUsage (PlanUsage)
 + trialUsage (TrialUsage)
 + subscription (Subscription)
+
+## GroupedSearchInput
++ companyFilter (CompanyFilter)
++ contactFilter (ContactFilter)
++ skip (number)
++ limit (number)
++ limitPerCompany (number)
++ sortCompaniesBy (CompanySortingOption)
++ sortContactsBy (CompanySortingOption)
+
+## CompanyFilter
++ ids (string)
++ names (string)
++ domains (string)
++ linkedinIds (string)
++ industries (string)
++ states (string)
++ countries (string)
++ descriptions (string)
++ technologies (string)
++ technologyCategories (string)
+
+## ContactFilter
++ ids (string)
++ names (string)
++ titles (string)
++ linkedinIds (string)
++ linkedinUrls (string)
++ seniorities (Seniority)
++ roles (string)
+
+## Seniority (enum[string])
++ Other
++ Executive
++ Manager
++ VP
++ Director
+
+## CompanySortingOption (enum[string])
++ IndustryDesc
++ IdAsc
++ NameAsc
++ IndustryAsc
++ IdDesc
++ NameDesc
 
 # Group Using GraphQL
 <a name="using-graphql"></a>
