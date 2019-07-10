@@ -1345,7 +1345,7 @@ Gives back a list of users based on the search input - linkedin url with premium
 
 Advanced Search queries lets you query company details along with the top n contacts in that company that match the search criteria.
 
-The search input accepts two filters `CompanyFilter` and `ContactFilter` which are used for matching the company and the contact respectively. For example, the following search input will look for contacts with the title as “Software Engineer” in the company “LeadIQ”:
+The search input accepts two filters `CompanyFilter` and `ContactFilter` which are used for matching the company and the contact respectively. For example, the following search input will look for contacts with the title as “Founder” in the company “LeadIQ”:
 
 **Request Body**
 
@@ -1383,12 +1383,10 @@ Query variables:
 {
     "input": {
         "companyFilter": {
-            "names": [
-                "LeadIQ"
-            ]
+            "names": ["LeadIQ"]
         },
         "contactFilter": {
-            "titles": ["founder"]
+            "titles": ["Founder"]
         },
     "limitPerCompany": 1,
     "sortContactsBy" : ["NameAsc"]
