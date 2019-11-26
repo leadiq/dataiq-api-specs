@@ -1832,6 +1832,88 @@ Gives back the different usage information for the user who is the owner of the 
 + IdDesc
 + NameDesc
 
+## ApiPersonFeedback
++ personId (string)
++ linkedinUrl (string)
++ linkedinId (string)
++ name (string)
++ companyId (string)
++ companyName (string) 
++ companyDomain (string)
++ title (string)
++ value (string) 
++ status (ContactInfoStatus)
++ invalidReason (InvalidReason)
++ type (ContactInfoType)
++ lastSeen (string)
+
+## ContactInfoStatus (enum[string])
++ Correct 
++ Invalid
+
+## ContactInfoType (enum[string])
++ WorkEmail
++ PersonalEmail
++ WorkPhone
++ WorkMobile
++ WorkBranch
++ WorkHQ
++ PersonalPhone
++ PersonalLandline
++ PersonalMobile
++ Fax
+
+## InvalidReason (enum[string])
++ EmailBounceCode500 
++ EmailBounceCode510 
++ EmailBounceCode511 
++ EmailBounceCode512 
++ EmailBounceCode513 
++ EmailBounceCode514 
++ EmailBounceCode515 
++ EmailBounceCode516 
++ EmailBounceCode517 
++ EmailBounceCode518 
++ EmailBounceCode520 
++ EmailBounceCode521 
++ EmailBounceCode522 
++ EmailBounceCode523 
++ EmailBounceCode524 
++ EmailBounceCode530 
++ EmailBounceCode531 
++ EmailBounceCode532 
++ EmailBounceCode533 
++ EmailBounceCode534 
++ EmailBounceCode540 
++ EmailBounceCode541 
++ EmailBounceCode542 
++ EmailBounceCode543 
++ EmailBounceCode544 
++ EmailBounceCode545 
++ EmailBounceCode546 
++ EmailBounceCode547 
++ EmailBounceCode550 
++ EmailBounceCode551 
++ EmailBounceCode552 
++ EmailBounceCode553 
++ EmailBounceCode554 
++ EmailBounceCode555 
++ EmailBounceCode560 
++ EmailBounceCode561 
++ EmailBounceCode562 
++ EmailBounceCode563 
++ EmailBounceCode564 
++ EmailBounceCode565 
++ EmailBounceCode570 
++ EmailBounceCode571 
++ EmailBounceCode572 
++ EmailBounceCode573 
++ EmailBounceCode574 
++ EmailBounceCode575 
++ EmailBounceCode576 
++ EmailBounceCode577 
++ Other
+
 # Group Using GraphQL
 <a name="using-graphql"></a>
 
@@ -1857,3 +1939,48 @@ Here is the list of tools that you can download to explore GraphQL schema.
 
 - [Insomnia](https://insomnia.rest/graphql/)
 - [GraphQL Playground](https://github.com/prisma/graphql-playground)
+
+# LeadIQ Feedback API  
+
+The feedback api is a REST api that allows you to submit feedback about the contacts you have captured either marking the information as invalid or correct or even providing the correct information when it was not present. 
+
+## Submit Person Feedback 
+
+Submit feedback about an email or a phone number of a particular contact 
+
+### Request [POST]
+
+Gives back the id of the created feedback
+
++ Request (application/json)
+
+    + Header
+            Authorization: Basic <Base64 Encode(api_key:)>
+            X-Client-ID: your_client_id
+            X-Payload-Signature: sha256_hash_of_body_using_your_client_secret
+
+    + Attributes (ApiPersonFeedback)
+
+    + Body
+
+            {
+                "personId":"PersonID-9d814c70-4d56-4a9c-9937-8b29f3130ddd","value":"mei@leadiq.com","status":"Correct"
+            }
+
++ Response 200 (application/json)
+
+    + Body 
+
+            "3912c70-9384-4hf3-0ddd-29fbb3139373"
+
++ Response 412 (text/plain)
+    
+    + Body 
+            
+            "Payload could not be verified"
+
++ Response 401 (text/plain)
+
+    + Body 
+        
+            "Provided identity token is invalid or missing"
