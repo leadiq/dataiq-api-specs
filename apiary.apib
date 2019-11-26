@@ -1945,7 +1945,7 @@ Here is the list of tools that you can download to explore GraphQL schema.
 
 The feedback api is a REST api that allows you to submit feedback about the contacts you have captured either marking the information as invalid or correct or even providing the correct information when it was not present. 
 
-## Submit Person Feedback 
+## Submit Person Feedback [/v1/feedback]
 
 Submit feedback about an email or a phone number of a particular contact 
 
@@ -1956,6 +1956,7 @@ Gives back the id of the created feedback
 + Request (application/json)
 
     + Header
+    
             Authorization: Basic <Base64 Encode(api_key:)>
             X-Client-ID: your_client_id
             X-Payload-Signature: sha256_hash_of_body_using_your_client_secret
